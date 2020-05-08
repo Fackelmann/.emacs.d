@@ -274,7 +274,6 @@
   ;; Hook to execute after work. Right when we enter the break state
   (let ((state (pomidor--current-state)))
     (if (pomidor--break state)
-	  (pomidor-insert-org-journal)
-      )))
+	  (pomidor-insert-org-journal))))
 
 (advice-add 'pomidor-break :after #'pomidor-after-work-hook)
