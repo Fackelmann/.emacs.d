@@ -130,8 +130,8 @@
 (global-set-key (kbd "C-c c") 'org-capture)
 
 (setq org-agenda-file-regexp "\\`\\\([^.].*\\.org\\\|[0-9]\\\{8\\\}\\\(\\.gpg\\\)?\\\)\\'")
-(setq org-agenda-files (list "~/org/inbox.org"
-			     "~/org/tasks.org"))
+;;(setq org-agenda-files (list "~/org/inbox.org"
+;;			     "~/org/tasks.org"))
 (add-to-list 'org-agenda-files org-journal-dir)
 
 (setq org-log-done t)
@@ -260,3 +260,21 @@
 
 ;; Toggle show paren mode. I don't know how I've lived without this all these years 05/03/20
 (show-paren-mode 1)
+
+;; Add hook to Pomidor to record completed pomodoros in org journal 05/07/20
+(defun pomidor-insert-org-journal ()
+  ;; Prompts the user to provide what was done during a pomodoro and adds it to the journal file
+  ;; with a timestamp
+	  (org-journal-new-entry nil)
+	  (insert (concat (read-string "What did you do in this Pomodoro? ") " :POMODORO:"))
+	  ;; And close org-journal window
+	  (delete-window))
+
+(defun pomidor-after-work-hook ()
+  ;; Hook to execute after work. Right when we enter the break state
+  (let ((state (pomidor--current-state)))
+    (if (pomidor--break state)
+	  (pomidor-insert-org-journal)
+      )))
+
+(advice-add 'pomidor-break :after #'pomidor-after-work-hook)
