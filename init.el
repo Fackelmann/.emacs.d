@@ -12,7 +12,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets smartparens company markdown-mode csv-mode)))
+    (alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
  '(send-mail-function (quote sendmail-send-it))
  '(verilog-typedef-regexp "_t$")
  '(writeroom-fullscreen-effect (quote maximized)))
@@ -23,6 +23,23 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :stipple nil :background "#2e3436" :foreground "#eeeeec" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 201 :width normal :foundry "nil" :family "Fira Code"))))
  '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0 :foreground "green")))))
+
+(require 'package)
+(setq package-enable-at-startup nil)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+(package-initialize)
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-when-compile
+  (require 'use-package))
+
+;; Install missing packages.
+(require 'use-package-ensure)
+(setq use-package-always-ensure t)
 
 ;;Creates new shell
 (fset 'nshell
@@ -46,20 +63,12 @@
 ;; Remove images from eww 02/22/18
 (setq shr-max-image-proportion nil)
 
-;; IDO
-;;(setq ido-enable-flex-matching t)
-;;;(setq ido-everywhere t)
-;;;(ido-mode 1)
 
-;; MELPA 06/06/19
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 
 ;; Enable company mode for all buffers 03/27/19
+(use-package company)
 (add-hook 'after-init-hook 'global-company-mode)
 
-;; Enable smarparens. Smart parenthesis 03/27/19
-;;(require 'smartparens-config)
 
 ;; Ace window. I love it! moves to other window by typying character window 03/27/19
 ;;(global-set-key (kbd "\C-xo") 'ace-window)
@@ -94,13 +103,7 @@
 ;;(linum-mode)
 
 ;; Enable Elpy 06/01/2019
-(package-initialize)
 ;; (elpy-enable)
-
-;; Exec path from shell 06/01/2019
-;; (exec-path-from-shell-initialize)
-;;(when (memq window-system '(mac ns x))
-;;  (exec-path-from-shell-initialize))
 
 ;; set python shell interpreter version for elpy 06/01/2019
 (setq python-shell-interpreter "/usr/local/bin/python3")
@@ -120,8 +123,8 @@
 (put 'scroll-left 'disabled nil)
 
 ;; Org settings
-(require 'org)
-(require 'org-journal)
+(use-package org)
+(use-package org-journal)
 (setq org-default-notes-file (concat org-directory "/inbox.org"))
 
 
@@ -161,7 +164,7 @@
 ;;(setq org-journal-file-header "#+STARTUP: showall")
 
 ;; Neotree 02/13
-(require 'neotree)
+(use-package neotree)
 (global-set-key [f8] 'neotree-toggle)
 (setq neo-smart-open t)
 
@@ -218,7 +221,7 @@
 (setq org-ref-default-bibliography '("/Users/dgonzalez/Documents/My Library.bib"))
 (setq bibtex-completion-bibliography '("/Users/dgonzalez/Documents/My Library.bib"))
 
-(require 'org-ref)
+(use-package org-ref)
 
 
 ;; Enable ligature for FiraCode
@@ -230,7 +233,7 @@
 ;; Ido mode didn't allow me to add a space to a filename in org roam
 ;; In any case helm seems more popular nowadays
 
-(require 'helm-config)
+(use-package helm)
 (helm-mode 1)
 (define-key global-map [remap find-file] 'helm-find-files)
 (define-key global-map [remap occur] 'helm-occur)
@@ -262,6 +265,7 @@
 (show-paren-mode 1)
 
 ;; Add hook to Pomidor to record completed pomodoros in org journal 05/07/20
+(use-package pomidor)
 (defun pomidor-insert-org-journal ()
   ;; Prompts the user to provide what was done during a pomodoro and adds it to the journal file
   ;; with a timestamp
@@ -277,3 +281,13 @@
 	  (pomidor-insert-org-journal))))
 
 (advice-add 'pomidor-break :after #'pomidor-after-work-hook)
+
+;; Activate helm fuzzy matching 05/09/20
+(setq helm-mode-fuzzy-match t)
+(setq helm-completion-in-region-fuzzy-match t)
+;;(setq helm-completion-style 'helm-fuzzy)
+(setq helm-completion-style 'emacs)
+(setq completion-styles '(helm-flex))
+
+;; set up Scheme for SICP 05/09/20
+(setq scheme-program-name "/usr/local/bin/scheme")
