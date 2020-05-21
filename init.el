@@ -301,4 +301,4 @@
 (setq scheme-program-name "/usr/local/bin/scheme")
 
 ;; 05/21/20
-(global-set-key [f9] 'helm-toggle-truncate-line)
+(global-set-key [f9] 'toggle-truncate-lines)
