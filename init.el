@@ -295,7 +295,10 @@
 (setq helm-completion-in-region-fuzzy-match t)
 ;;(setq helm-completion-style 'helm-fuzzy)
 (setq helm-completion-style 'emacs)
-(setq completion-styles (if (version<= emacs-version "27.0") 'helm-flex 'flex))
+(setq completion-styles (if (version<= emacs-version "27.0") '(helm-flex) '(flex)))
 
 ;; set up Scheme for SICP 05/09/20
 (setq scheme-program-name "/usr/local/bin/scheme")
+
+;; 05/21/20
+(global-set-key [f9] 'helm-toggle-truncate-line)
