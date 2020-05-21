@@ -1,0 +1,9 @@
+auto-save-list/
+backups/
+bookmarks
+elpa/
+eshell/
+ido.last
+org-journal.cache
+transient/
+url/

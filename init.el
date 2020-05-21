@@ -61,7 +61,8 @@
 (put 'dired-find-alternate-file 'disabled nil)
 
 ;; Remove images from eww 02/22/18
-(setq shr-max-image-proportion nil)
+;; (setq shr-max-image-proportion nil)
+(setq shr-inhibit-images t)
 
 
 
@@ -138,6 +139,13 @@
 (add-to-list 'org-agenda-files org-journal-dir)
 
 (setq org-log-done t)
+
+;; Adding some new templates 05/21/20
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline org-default-notes-file  "Tasks")
+	 "* TODO %?\n  %i\n ")
+	("n" "Notes" entry (file+headline org-default-notes-file "Notes")
+	 "* %?\n %i\n")))
 
 ;; --- Magit
 ;; Bind magit C-x g
@@ -287,7 +295,7 @@
 (setq helm-completion-in-region-fuzzy-match t)
 ;;(setq helm-completion-style 'helm-fuzzy)
 (setq helm-completion-style 'emacs)
-(setq completion-styles '(helm-flex))
+(setq completion-styles (if (version<= emacs-version "27.0") 'helm-flex 'flex))
 
 ;; set up Scheme for SICP 05/09/20
 (setq scheme-program-name "/usr/local/bin/scheme")
