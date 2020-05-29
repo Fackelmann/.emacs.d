@@ -6,13 +6,12 @@
  '(column-number-mode t)
  '(custom-enabled-themes (quote (tango-dark)))
  '(deft-default-extension "org" t)
- '(deft-directory "/Users/dgonzalez/Documents/org_roam/" t)
  '(deft-recursive t t)
  '(deft-use-filter-string-for-filename t t)
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
+    (elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
  '(send-mail-function (quote sendmail-send-it))
  '(verilog-typedef-regexp "_t$")
  '(writeroom-fullscreen-effect (quote maximized)))
@@ -302,3 +301,13 @@
 
 ;; 05/21/20
 (global-set-key [f9] 'toggle-truncate-lines)
+
+;; 05/28/20 elmacro mode, convert macros to elisp
+(use-package elmacro)
+(elmacro-mode)
+
+(use-package elfeed)
+(use-package elfeed-org)
+(elfeed-org)
+(global-set-key (kbd "C-x w") 'elfeed)
+(setq browse-url-browser-function 'eww-browse-url)
