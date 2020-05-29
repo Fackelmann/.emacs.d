@@ -4,14 +4,18 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(custom-enabled-themes (quote (tango-dark)))
+ '(custom-safe-themes
+   (quote
+    ("aded61687237d1dff6325edb492bde536f40b048eab7246c61d5c6643c696b7f" "939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "e1d09f1b2afc2fed6feb1d672be5ec6ae61f84e058cb757689edb669be926896" default)))
  '(deft-default-extension "org" t)
+ '(deft-directory "/Users/dgonzalez/Documents/org_roam/" t)
  '(deft-recursive t t)
  '(deft-use-filter-string-for-filename t t)
  '(inhibit-startup-screen t)
+ '(org-roam-directory "/Users/dgonzalez/Documents/org_roam/")
  '(package-selected-packages
    (quote
-    (elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
+    (gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
  '(send-mail-function (quote sendmail-send-it))
  '(verilog-typedef-regexp "_t$")
  '(writeroom-fullscreen-effect (quote maximized)))
@@ -311,3 +315,7 @@
 (elfeed-org)
 (global-set-key (kbd "C-x w") 'elfeed)
 (setq browse-url-browser-function 'eww-browse-url)
+
+;; 05/28/20 gruvbox theme
+(use-package gruvbox-theme)
+(load-theme 'gruvbox-dark-medium t)
