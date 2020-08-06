@@ -194,6 +194,14 @@
               ("h" "Habit" entry (file "~/org/inbox.org")
                "* NEXT %?\n%U\n\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
 
+;; set up refile targets
+; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+(setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                 (org-agenda-files :maxlevel . 9))))
+
+; Allow refile to create parent tasks with confirmation
+(setq org-refile-allow-creating-parent-nodes (quote confirm))
+
 ;; --- Magit
 ;; Bind magit C-x g
 (global-set-key (kbd "C-x g") 'magit-status)
