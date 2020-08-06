@@ -11,12 +11,16 @@
  '(deft-directory "/Users/dgonzalez/Documents/org_roam/" t)
  '(deft-recursive t t)
  '(deft-use-filter-string-for-filename t t)
+ '(display-time-mode t)
+ '(global-display-line-numbers-mode t)
  '(inhibit-startup-screen t)
  '(org-roam-directory "/Users/dgonzalez/Documents/org_roam/")
  '(package-selected-packages
    (quote
-    (gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
+    (ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
  '(send-mail-function (quote sendmail-send-it))
+ '(show-paren-mode t)
+ '(tool-bar-mode nil)
  '(verilog-typedef-regexp "_t$")
  '(writeroom-fullscreen-effect (quote maximized)))
 (custom-set-faces
@@ -24,8 +28,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#2e3436" :foreground "#eeeeec" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 201 :width normal :foundry "nil" :family "Fira Code"))))
- '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0 :foreground "green")))))
+ '(default ((t (:family "Fira Code" :foundry "nil" :slant normal :weight normal :height 181 :width normal)))))
 
 (require 'package)
 (setq package-enable-at-startup nil)
@@ -66,6 +69,7 @@
 ;; Remove images from eww 02/22/18
 ;; (setq shr-max-image-proportion nil)
 (setq shr-inhibit-images t)
+(setq shr-width 78)
 
 
 
@@ -137,18 +141,58 @@
 (global-set-key (kbd "C-c c") 'org-capture)
 
 (setq org-agenda-file-regexp "\\`\\\([^.].*\\.org\\\|[0-9]\\\{8\\\}\\\(\\.gpg\\\)?\\\)\\'")
-;;(setq org-agenda-files (list "~/org/inbox.org"
-;;			     "~/org/tasks.org"))
+(setq org-agenda-files (list "~/org"
+			     "~/org/work"))
 (add-to-list 'org-agenda-files org-journal-dir)
 
 (setq org-log-done t)
 
 ;; Adding some new templates 05/21/20
+;; (setq org-capture-templates
+;;       '(("t" "Todo" entry (file+headline org-default-notes-file  "Tasks")
+;; 	 "* TODO %?\n  %i\n ")
+;; 	("n" "Notes" entry (file+headline org-default-notes-file "Notes")
+;; 	 "* %?\n %i\n")))
+
+;; TODO keywords 08/06/20
+(setq org-todo-keywords
+      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+
+(setq org-todo-keyword-faces
+      (quote (("TODO" :foreground "red" :weight bold)
+              ("NEXT" :foreground "blue" :weight bold)
+              ("DONE" :foreground "forest green" :weight bold)
+              ("WAITING" :foreground "orange" :weight bold)
+              ("HOLD" :foreground "magenta" :weight bold)
+              ("CANCELLED" :foreground "forest green" :weight bold)
+              ("MEETING" :foreground "forest green" :weight bold)
+              ("PHONE" :foreground "forest green" :weight bold))))
+
+;; TODO tags 08/06/20
+(setq org-todo-state-tags-triggers
+      (quote (("CANCELLED" ("CANCELLED" . t))
+              ("WAITING" ("WAITING" . t))
+              ("HOLD" ("WAITING") ("HOLD" . t))
+              (done ("WAITING") ("HOLD"))
+              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+
+;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
 (setq org-capture-templates
-      '(("t" "Todo" entry (file+headline org-default-notes-file  "Tasks")
-	 "* TODO %?\n  %i\n ")
-	("n" "Notes" entry (file+headline org-default-notes-file "Notes")
-	 "* %?\n %i\n")))
+      (quote (("t" "todo" entry (file "~/org/inbox.org")
+               "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+              ("n" "note" entry (file "~/org/inbox.org")
+               "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+              ("w" "org-protocol" entry (file "~/org/inbox.org")
+               "* TODO Review %c\n%U\n" :immediate-finish t)
+              ("m" "Meeting" entry (file "~/org/inbox.org")
+               "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+              ("p" "Phone call" entry (file "~/org/inbox.org")
+               "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
+              ("h" "Habit" entry (file "~/org/inbox.org")
+               "* NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
 
 ;; --- Magit
 ;; Bind magit C-x g
@@ -182,7 +226,7 @@
 ;; Helm bibtex 04/01
 (autoload 'helm-bibtex "helm-bibtex" "" t)
 (setq bibtex-completion-bibliography
-      '("/Users/dgonzalez/Documents/My Library.bib"))
+      '("/Users/dgonzalez/Documents/library.bib"))
 
 ;;(setq bibtex-completion-format-citation-functions
 ;;  '((org-mode      . bibtex-completion-format-citation-default)
@@ -226,11 +270,11 @@
   (deft-default-extension "org")
   (deft-directory "/Users/dgonzalez/Documents/org_roam/"))
 
-(setq reftex-default-bibliography '("/Users/dgonzalez/Documents/My Library.bib"))
+(setq reftex-default-bibliography '("/Users/dgonzalez/Documents/library.bib"))
 
 ;; see org-ref for use of these variables
-(setq org-ref-default-bibliography '("/Users/dgonzalez/Documents/My Library.bib"))
-(setq bibtex-completion-bibliography '("/Users/dgonzalez/Documents/My Library.bib"))
+(setq org-ref-default-bibliography '("/Users/dgonzalez/Documents/library.bib"))
+(setq bibtex-completion-bibliography '("/Users/dgonzalez/Documents/library.bib"))
 
 (use-package org-ref)
 
@@ -256,7 +300,7 @@
   (define-key lisp-interaction-mode-map [remap completion-at-point] 'helm-lisp-completion-at-point)
   (define-key emacs-lisp-mode-map       [remap completion-at-point] 'helm-lisp-completion-at-point))
 (add-hook 'kill-emacs-hook #'(lambda () (and (file-exists-p "/tmp/helm-cfg.el") (delete-file "/tmp/helm-cfg.el"))))
-;;(global-set-key (kbd "C-c b") 'helm-bibtex)
+(global-set-key (kbd "C-c b") 'helm-bibtex)
 ;;
 ;; Some original Emacs commands are replaced by their ‘helm’ counterparts:
 
@@ -271,6 +315,8 @@
 
 ;; Toggle truncate lines in all buffers 04/25/20
 (setq-default truncate-lines t)
+;;(setq truncate-partial-width-windows nil)
+;;(global-visual-line-mode 1)
 
 ;; Toggle show paren mode. I don't know how I've lived without this all these years 05/03/20
 (show-paren-mode 1)
@@ -319,3 +365,7 @@
 ;; 05/28/20 gruvbox theme
 (use-package gruvbox-theme)
 (load-theme 'gruvbox-dark-medium t)
+
+;; Enable markdown export org mode
+(eval-after-load "org"
+  '(require 'ox-gfm nil t))

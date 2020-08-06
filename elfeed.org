@@ -1,3 +1,9 @@
 * Blogs :elfeed:
 ** Software :software:
 *** https://www.daemonology.net/hn-daily/index.rss
+** Rationality :rationality:
+*** https://fs.blog/feed/
+*** https://www.lesswrong.com/feed.xml?view=curated-rss
+*** https://slatestarcodex.com/feed/
+*** https://www.scottaaronson.com/blog/?feed=rss2
+*** https://rationalnewsletter.com/issues.atom
