@@ -5,24 +5,23 @@
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(custom-safe-themes
-   (quote
-    ("aded61687237d1dff6325edb492bde536f40b048eab7246c61d5c6643c696b7f" "939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "e1d09f1b2afc2fed6feb1d672be5ec6ae61f84e058cb757689edb669be926896" default)))
+   '("aded61687237d1dff6325edb492bde536f40b048eab7246c61d5c6643c696b7f" "939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "e1d09f1b2afc2fed6feb1d672be5ec6ae61f84e058cb757689edb669be926896" default))
  '(deft-default-extension "org" t)
  '(deft-directory "/Users/dgonzalez/Documents/org_roam/" t)
  '(deft-recursive t t)
  '(deft-use-filter-string-for-filename t t)
  '(display-time-mode t)
  '(global-display-line-numbers-mode t)
+ '(helm-completion-style 'emacs)
  '(inhibit-startup-screen t)
  '(org-roam-directory "/Users/dgonzalez/Documents/org_roam/")
  '(package-selected-packages
-   (quote
-    (ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
- '(send-mail-function (quote sendmail-send-it))
+   '(plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode))
+ '(send-mail-function 'sendmail-send-it)
  '(show-paren-mode t)
  '(tool-bar-mode nil)
  '(verilog-typedef-regexp "_t$")
- '(writeroom-fullscreen-effect (quote maximized)))
+ '(writeroom-fullscreen-effect 'maximized))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -123,10 +122,10 @@
 
 ;; Add fill column indicator mode to python mode
 (setq-default fill-column 80)
-(add-hook 'python-mode-hook 'fci-mode)
-(add-hook 'python-mode-hook 'flycheck-mode)
+;;(add-hook 'python-mode-hook 'fci-mode)
+;;(add-hook 'python-mode-hook 'flycheck-mode)
 ;;Show whitespaces in python 12/10/19
-(add-hook 'python-mode-hook 'whitespace-mode)
+;;(add-hook 'python-mode-hook 'whitespace-mode)
 ;;Dunno 12/10/19
 (put 'scroll-left 'disabled nil)
 
@@ -200,16 +199,21 @@
                                  (org-agenda-files :maxlevel . 9))))
 
 ; Allow refile to create parent tasks with confirmation
-(setq org-refile-allow-creating-parent-nodes (quote confirm))
+(setq org-refile-use-outline-path 'file)
+(setq org-outline-path-complete-in-steps nil)
+(setq org-refile-allow-creating-parent-nodes 'confirm)
 
+(setq org-startup-indented t)
 ;; --- Magit
 ;; Bind magit C-x g
+(use-package magit)
 (global-set-key (kbd "C-x g") 'magit-status)
 ;; 12/13/19 Stop magit from asking to save modified files every damn time I try to do somethin
 (setq magit-save-repository-buffers nil)
 
 ;; Enabling undo tree mode 01/02/20
- (global-undo-tree-mode)
+(use-package undo-tree)
+(global-undo-tree-mode)
 
 
 ;; Binding org journal scheduled entry 02/11/20
@@ -226,10 +230,8 @@
 (define-key org-journal-mode-map (kbd "C-x C-s") 'org-journal-save-entry-and-exit)
 ;;(setq org-journal-file-header "#+STARTUP: showall")
 
-;; Neotree 02/13
-(use-package neotree)
-(global-set-key [f8] 'neotree-toggle)
-(setq neo-smart-open t)
+(global-set-key [f8] 'rename-buffer)
+
 
 ;; Helm bibtex 04/01
 (autoload 'helm-bibtex "helm-bibtex" "" t)
@@ -243,48 +245,48 @@
 ;;    (default       . bibtex-completion-format-citation-default)))
 
 ;; Org-roam 04/12/20
-(use-package org-roam
-      :hook 
-      (after-init . org-roam-mode)
-      :custom
-      (org-roam-directory "/Users/dgonzalez/Documents/org_roam/")
-      :bind (:map org-roam-mode-map
-              (("C-c n l" . org-roam)
-               ("C-c n f" . org-roam-find-file)
-               ("C-c n b" . org-roam-switch-to-buffer)
-               ("C-c n g" . org-roam-graph-show))
-              :map org-mode-map
-              (("C-c n i" . org-roam-insert))))
+;; (use-package org-roam
+;;       :hook 
+;;       (after-init . org-roam-mode)
+;;       :custom
+;;       (org-roam-directory "/Users/dgonzalez/Documents/org_roam/")
+;;       :bind (:map org-roam-mode-map
+;;               (("C-c n l" . org-roam)
+;;                ("C-c n f" . org-roam-find-file)
+;;                ("C-c n b" . org-roam-switch-to-buffer)
+;;                ("C-c n g" . org-roam-graph-show))
+;;               :map org-mode-map
+;;               (("C-c n i" . org-roam-insert))))
 
-(setq org-roam-link-title-format "R:%s")
+;; (setq org-roam-link-title-format "R:%s")
 
-;; I like my filenames to be only given by timestamp, so removing title (which can change.
-(setq org-roam-capture-templates
-  '(("d" "default" plain (function org-roam-capture--get-point)
-     "%?"
-     :file-name "%<%Y%m%d%H%M%S>"
-     :head "#+TITLE: ${title}\n"
-     :unnarrowed t)))
-(setq org-roam-graph-executable "/usr/local/bin/dot")
-(setq org-roam-graph-viewer "/Applications/Firefox Nightly.app/Contents/MacOS/firefox")
+;; ;; I like my filenames to be only given by timestamp, so removing title (which can change.
+;; (setq org-roam-capture-templates
+;;   '(("d" "default" plain (function org-roam-capture--get-point)
+;;      "%?"
+;;      :file-name "%<%Y%m%d%H%M%S>"
+;;      :head "#+TITLE: ${title}\n"
+;;      :unnarrowed t)))
+;; (setq org-roam-graph-executable "/usr/local/bin/dot")
+;; (setq org-roam-graph-viewer "/Applications/Firefox Nightly.app/Contents/MacOS/firefox")
 
-(use-package deft
-  :after org
-  :bind
-  ("C-c n d" . deft)
-  :custom
-  (deft-recursive t)
-  (deft-use-filter-string-for-filename t)
-  (deft-default-extension "org")
-  (deft-directory "/Users/dgonzalez/Documents/org_roam/"))
+;; (use-package deft
+;;   :after org
+;;   :bind
+;;   ("C-c n d" . deft)
+;;   :custom
+;;   (deft-recursive t)
+;;   (deft-use-filter-string-for-filename t)
+;;   (deft-default-extension "org")
+;;   (deft-directory "/Users/dgonzalez/Documents/org_roam/"))
 
-(setq reftex-default-bibliography '("/Users/dgonzalez/Documents/library.bib"))
+;; (setq reftex-default-bibliography '("/Users/dgonzalez/Documents/library.bib"))
 
-;; see org-ref for use of these variables
-(setq org-ref-default-bibliography '("/Users/dgonzalez/Documents/library.bib"))
-(setq bibtex-completion-bibliography '("/Users/dgonzalez/Documents/library.bib"))
+;; ;; see org-ref for use of these variables
+;; (setq org-ref-default-bibliography '("/Users/dgonzalez/Documents/library.bib"))
+;; (setq bibtex-completion-bibliography '("/Users/dgonzalez/Documents/library.bib"))
 
-(use-package org-ref)
+;; (use-package org-ref)
 
 
 ;; Enable ligature for FiraCode
@@ -377,3 +379,39 @@
 ;; Enable markdown export org mode
 (eval-after-load "org"
   '(require 'ox-gfm nil t))
+
+(use-package company-lsp)
+;;(require 'company-lsp)
+(push 'company-lsp company-backends)
+
+;; Set up emacsclient for editing commands 06/29/20
+;;(server-start)
+;;export VISUAL=emacsclient
+
+
+
+(defun my-python-mode-hook ()
+  (fci-mode 1)
+  (flycheck-mode 1)
+  (whitespace-mode 1))
+
+(add-hook 'python-mode-hook 'my-python-mode-hook)
+
+;;(setq lsp-keymap-prefix "C-x l")
+(use-package lsp-mode
+    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+            (python-mode . lsp)
+            ;; if you want which-key integration
+            (lsp-mode . (lambda ()
+                      (let ((lsp-keymap-prefix "C-c l"))
+                        (lsp-enable-which-key-integration)))))
+     :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+    :commands lsp)
+
+;; if you are helm user
+(use-package helm-lsp :commands helm-lsp-workspace-symbol)
+
+(define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+
+;; Disable menu bar 07/15/20
+(menu-bar-mode -1)
