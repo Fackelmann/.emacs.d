@@ -18,7 +18,7 @@
  '(org-roam-directory "/Users/dgonzalez/Documents/org_roam/")
  '(package-selected-packages
    (quote
-    (lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
+    (pass lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
  '(send-mail-function (quote sendmail-send-it))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
@@ -417,3 +417,6 @@
 
 ;; Disable menu bar 07/15/20
 (menu-bar-mode -1)
+
+;; Add pass major mode 08/07/20
+(use-package pass)
