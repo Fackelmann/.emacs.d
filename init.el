@@ -5,23 +5,25 @@
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(custom-safe-themes
-   '("aded61687237d1dff6325edb492bde536f40b048eab7246c61d5c6643c696b7f" "939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "e1d09f1b2afc2fed6feb1d672be5ec6ae61f84e058cb757689edb669be926896" default))
+   (quote
+    ("aded61687237d1dff6325edb492bde536f40b048eab7246c61d5c6643c696b7f" "939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "e1d09f1b2afc2fed6feb1d672be5ec6ae61f84e058cb757689edb669be926896" default)))
  '(deft-default-extension "org" t)
  '(deft-directory "/Users/dgonzalez/Documents/org_roam/" t)
  '(deft-recursive t t)
  '(deft-use-filter-string-for-filename t t)
  '(display-time-mode t)
  '(global-display-line-numbers-mode t)
- '(helm-completion-style 'emacs)
+ '(helm-completion-style (quote emacs))
  '(inhibit-startup-screen t)
  '(org-roam-directory "/Users/dgonzalez/Documents/org_roam/")
  '(package-selected-packages
-   '(plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode))
- '(send-mail-function 'sendmail-send-it)
+   (quote
+    (lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
+ '(send-mail-function (quote sendmail-send-it))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
  '(verilog-typedef-regexp "_t$")
- '(writeroom-fullscreen-effect 'maximized))
+ '(writeroom-fullscreen-effect (quote maximized)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -203,7 +205,7 @@
 (setq org-outline-path-complete-in-steps nil)
 (setq org-refile-allow-creating-parent-nodes 'confirm)
 
-(setq org-startup-indented t)
+;;(setq org-startup-indented t)
 ;; --- Magit
 ;; Bind magit C-x g
 (use-package magit)
