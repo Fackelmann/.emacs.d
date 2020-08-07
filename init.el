@@ -230,7 +230,9 @@
   (save-buffer)
   (kill-buffer-and-window))
 (define-key org-journal-mode-map (kbd "C-x C-s") 'org-journal-save-entry-and-exit)
-;;(setq org-journal-file-header "#+STARTUP: showall")
+;; Add clocktable at the beginning of header file 07/08/20
+(setq org-journal-file-header "#+BEGIN: clocktable :scope file :maxlevel 9 :block today :scope agenda :fileskip0 t")
+
 
 (global-set-key [f8] 'rename-buffer)
 
