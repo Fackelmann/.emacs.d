@@ -1,6 +1,7 @@
 * Blogs :elfeed:
 ** Software :software:
 *** https://www.daemonology.net/hn-daily/index.rss
+*** https://www.reddit.com/r/emacs/.rss
 ** Rationality :rationality:
 *** https://fs.blog/feed/
 *** https://www.lesswrong.com/feed.xml?view=curated-rss
