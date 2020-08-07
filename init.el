@@ -386,11 +386,8 @@
 ;;(require 'company-lsp)
 (push 'company-lsp company-backends)
 
-;; Set up emacsclient for editing commands 06/29/20
-;;(server-start)
-;;export VISUAL=emacsclient
-
-
+;; Set up emacsclient for editing commands. See Bashrc too 08/07/20
+(server-start)
 
 (defun my-python-mode-hook ()
   (fci-mode 1)
