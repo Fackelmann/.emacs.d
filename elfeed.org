@@ -1,10 +1,12 @@
-* Blogs :elfeed:
-** Software :software:
+* Feeds                                                              :elfeed:
+** Software                                                        :software:
 *** https://www.daemonology.net/hn-daily/index.rss
-*** https://www.reddit.com/r/emacs/.rss
-** Rationality :rationality:
+*** https://old.reddit.com/r/emacs/top/.rss
+** Rationality                                                  :rationality:
 *** https://fs.blog/feed/
 *** https://www.lesswrong.com/feed.xml?view=curated-rss
 *** https://slatestarcodex.com/feed/
 *** https://www.scottaaronson.com/blog/?feed=rss2
 *** https://rationalnewsletter.com/issues.atom
+** Blogs                                                              :blogs:
+*** https://danielgplaza.com/index.xml
