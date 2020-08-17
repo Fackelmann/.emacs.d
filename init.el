@@ -18,7 +18,7 @@
  '(org-roam-directory "/Users/dgonzalez/Documents/org_roam/")
  '(package-selected-packages
    (quote
-    (lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
+    (mu4e lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
  '(send-mail-function (quote sendmail-send-it))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
@@ -419,3 +419,45 @@
 
 ;; Add pass major mode 08/07/20
 (use-package pass)
+
+;; Add mu4e mail client
+(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
+(require 'mu4e)
+
+(setq
+ mue4e-headers-skip-duplicates  t
+ mu4e-view-show-images t
+ mu4e-view-show-addresses t
+ mu4e-compose-format-flowed nil
+ mu4e-date-format "%y/%m/%d"
+ mu4e-headers-date-format "%Y/%m/%d"
+ mu4e-change-filenames-when-moving t
+ mu4e-attachments-dir "~/Downloads"
+ user-mail-address "dan@danielgplaza.com"
+
+ mu4e-maildir       "~/Maildir/fastmail"   ;; top-level Maildir
+ ;; note that these folders below must start with /
+ ;; the paths are relative to maildir root
+ mu4e-refile-folder "/Archive"
+ mu4e-sent-folder   "/Sent"
+ mu4e-drafts-folder "/Drafts"
+ mu4e-trash-folder  "/Trash")
+
+;; this setting allows to re-sync and re-index mail
+;; by pressing U
+(setq mu4e-get-mail-command  "mbsync -a")
+
+
+(setq
+ message-send-mail-function   'smtpmail-send-it
+ smtpmail-default-smtp-server "smtp.fastmail.com"
+ smtpmail-smtp-server         "smtp.fastmail.com"
+ smtpmail-stream-type 'starttls
+ smtpmail-smtp-service 587
+ smtp-local-domain "fastmail.com")
+
+(global-set-key (kbd "C-x m") 'mu4e)
+
+(fset 'my-move-to-trash "mTrash")
+(define-key mu4e-headers-mode-map (kbd "d") 'my-move-to-trash)
+(define-key mu4e-view-mode-map (kbd "d") 'my-move-to-trash)
