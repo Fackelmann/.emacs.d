@@ -8,17 +8,17 @@
    (quote
     ("aded61687237d1dff6325edb492bde536f40b048eab7246c61d5c6643c696b7f" "939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "e1d09f1b2afc2fed6feb1d672be5ec6ae61f84e058cb757689edb669be926896" default)))
  '(deft-default-extension "org" t)
- '(deft-directory "/Users/dgonzalez/Documents/org_roam/" t)
+ '(deft-directory "~/org-roam" t)
  '(deft-recursive t t)
  '(deft-use-filter-string-for-filename t t)
  '(display-time-mode t)
  '(global-display-line-numbers-mode t)
  '(helm-completion-style (quote emacs))
  '(inhibit-startup-screen t)
- '(org-roam-directory "/Users/dgonzalez/Documents/org_roam/")
+ '(org-roam-directory "~/org-roam" t)
  '(package-selected-packages
    (quote
-    (mu4e lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft org-roam smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
+    (lsp-ui moody mu4e lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
  '(send-mail-function (quote sendmail-send-it))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
@@ -69,8 +69,8 @@
 
 ;; Remove images from eww 02/22/18
 ;; (setq shr-max-image-proportion nil)
-(setq shr-inhibit-images t)
-(setq shr-width 78)
+;;(setq shr-inhibit-images t)
+;;(setq shr-width 78)
 
 
 
@@ -112,15 +112,12 @@
 ;;(linum-mode)
 
 ;; Enable Elpy 06/01/2019
-;; (elpy-enable)
+;;(elpy-enable)
 
 ;; set python shell interpreter version for elpy 06/01/2019
 (setq python-shell-interpreter "/usr/local/bin/python3")
 
-;; Add Flycheck to python mode and remove flymake
-;;(setq flycheck-python-pylint-executable "python3")
-;;(add-hook 'python-mode-hook 'flycheck-mode)
-;;(remove-hook 'elpy-modules 'elpy-module-flymake)
+
 
 ;; Add fill column indicator mode to python mode
 (setq-default fill-column 80)
@@ -248,41 +245,42 @@
 ;;    (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
 ;;    (default       . bibtex-completion-format-citation-default)))
 
-;; Org-roam 04/12/20
-;; (use-package org-roam
-;;       :hook 
-;;       (after-init . org-roam-mode)
-;;       :custom
-;;       (org-roam-directory "/Users/dgonzalez/Documents/org_roam/")
-;;       :bind (:map org-roam-mode-map
-;;               (("C-c n l" . org-roam)
-;;                ("C-c n f" . org-roam-find-file)
-;;                ("C-c n b" . org-roam-switch-to-buffer)
-;;                ("C-c n g" . org-roam-graph-show))
-;;               :map org-mode-map
-;;               (("C-c n i" . org-roam-insert))))
+;;Org-roam 04/12/20
+(use-package org-roam
+      :ensure t
+      :hook
+      (after-init . org-roam-mode)
+      :custom
+      (org-roam-directory "~/org-roam")
+      :bind (:map org-roam-mode-map
+              (("C-c n l" . org-roam)
+               ("C-c n f" . org-roam-find-file)
+               ("C-c n g" . org-roam-graph-show))
+              :map org-mode-map
+              (("C-c n i" . org-roam-insert))
+              (("C-c n I" . org-roam-insert-immediate))))
 
-;; (setq org-roam-link-title-format "R:%s")
+(setq org-roam-link-title-format "R:%s")
 
-;; ;; I like my filenames to be only given by timestamp, so removing title (which can change.
-;; (setq org-roam-capture-templates
-;;   '(("d" "default" plain (function org-roam-capture--get-point)
-;;      "%?"
-;;      :file-name "%<%Y%m%d%H%M%S>"
-;;      :head "#+TITLE: ${title}\n"
-;;      :unnarrowed t)))
-;; (setq org-roam-graph-executable "/usr/local/bin/dot")
-;; (setq org-roam-graph-viewer "/Applications/Firefox Nightly.app/Contents/MacOS/firefox")
+;; I like my filenames to be only given by timestamp, so removing title (which can change.
+(setq org-roam-capture-templates
+  '(("d" "default" plain (function org-roam-capture--get-point)
+     "%?"
+     :file-name "%<%Y%m%d%H%M%S>"
+     :head "#+TITLE: ${title}\n"
+     :unnarrowed t)))
+(setq org-roam-graph-executable "/usr/local/bin/dot")
+(setq org-roam-graph-viewer "/Applications/Firefox Nightly.app/Contents/MacOS/firefox")
 
-;; (use-package deft
-;;   :after org
-;;   :bind
-;;   ("C-c n d" . deft)
-;;   :custom
-;;   (deft-recursive t)
-;;   (deft-use-filter-string-for-filename t)
-;;   (deft-default-extension "org")
-;;   (deft-directory "/Users/dgonzalez/Documents/org_roam/"))
+(use-package deft
+  :after org
+  :bind
+  ("C-c n d" . deft)
+  :custom
+  (deft-recursive t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  (deft-directory "~/org-roam"))
 
 ;; (setq reftex-default-bibliography '("/Users/dgonzalez/Documents/library.bib"))
 
@@ -328,9 +326,10 @@
 ;; - ‘execute-extended-command’(M-x) =>‘helm-M-x’
 
 ;; Toggle truncate lines in all buffers 04/25/20
-(setq-default truncate-lines t)
+;;(setq-default truncate-lines t)
+;;(setq truncate-partial-width-windows nil) ;; for vertically-split windows
 ;;(setq truncate-partial-width-windows nil)
-;;(global-visual-line-mode 1)
+(global-visual-line-mode t)
 
 ;; Toggle show paren mode. I don't know how I've lived without this all these years 05/03/20
 (show-paren-mode 1)
@@ -377,8 +376,21 @@
 (setq browse-url-browser-function 'eww-browse-url)
 
 ;; 05/28/20 gruvbox theme
-(use-package gruvbox-theme)
-(load-theme 'gruvbox-dark-medium t)
+(use-package gruvbox-theme
+  :config
+  (load-theme 'gruvbox-dark-medium t)
+  (let ((line (face-attribute 'mode-line :underline)))
+    (set-face-attribute 'mode-line          nil :overline   line)
+    (set-face-attribute 'mode-line-inactive nil :overline   line)
+    (set-face-attribute 'mode-line-inactive nil :underline  line)
+    (set-face-attribute 'mode-line          nil :box        nil)
+    (set-face-attribute 'mode-line-inactive nil :box        nil)))
+
+(use-package moody
+  :config
+  (setq x-underline-at-descent-line t)
+  (moody-replace-mode-line-buffer-identification)
+  (moody-replace-vc-mode))
 
 ;; Enable markdown export org mode
 (eval-after-load "org"
@@ -391,24 +403,40 @@
 ;; Set up emacsclient for editing commands. See Bashrc too 08/07/20
 (server-start)
 
-(defun my-python-mode-hook ()
-  (fci-mode 1)
-  (flycheck-mode 1)
-  (whitespace-mode 1))
+;; Add Flycheck to python mode and remove flymake
+;;(setq flycheck-python-pylint-executable "python3")
+;;(add-hook 'python-mode-hook 'flycheck-mode)
+;;(remove-hook 'elpy-modules 'elpy-module-flymake)
 
-(add-hook 'python-mode-hook 'my-python-mode-hook)
+;;(add-hook 'python-mode-hook 'my-python-mode-hook)
 
 ;;(setq lsp-keymap-prefix "C-x l")
+
+;;(add-hook 'python-mode-hook 'whitespace-mode)
+
+
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
 (use-package lsp-mode
     :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-            (python-mode . lsp)
+	   (python-mode . lsp)
             ;; if you want which-key integration
             (lsp-mode . (lambda ()
                       (let ((lsp-keymap-prefix "C-c l"))
                         (lsp-enable-which-key-integration)))))
      :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-    :commands lsp)
+     :commands lsp)
 
+(use-package lsp-ui
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+	 (python-mode . lsp-ui-mode)))
+
+(use-package whitespace
+  :ensure t
+  :init
+  (add-hook 'python-mode-hook 'whitespace-mode))
 ;; if you are helm user
 (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 
