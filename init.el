@@ -5,25 +5,23 @@
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(custom-safe-themes
-   (quote
-    ("aded61687237d1dff6325edb492bde536f40b048eab7246c61d5c6643c696b7f" "939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "e1d09f1b2afc2fed6feb1d672be5ec6ae61f84e058cb757689edb669be926896" default)))
+   '("aded61687237d1dff6325edb492bde536f40b048eab7246c61d5c6643c696b7f" "939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "e1d09f1b2afc2fed6feb1d672be5ec6ae61f84e058cb757689edb669be926896" default))
  '(deft-default-extension "org" t)
  '(deft-directory "~/org-roam" t)
  '(deft-recursive t t)
  '(deft-use-filter-string-for-filename t t)
  '(display-time-mode t)
  '(global-display-line-numbers-mode t)
- '(helm-completion-style (quote emacs))
+ '(helm-completion-style 'emacs)
  '(inhibit-startup-screen t)
- '(org-roam-directory "~/org-roam" t)
+ '(org-roam-directory "~/org-roam")
  '(package-selected-packages
-   (quote
-    (lsp-ui moody mu4e lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode)))
- '(send-mail-function (quote sendmail-send-it))
+   '(helm-postframe helm-posframe org-roam-bibtex define-word company-capf lsp-ui moody mu4e lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode))
+ '(send-mail-function 'sendmail-send-it)
  '(show-paren-mode t)
  '(tool-bar-mode nil)
  '(verilog-typedef-regexp "_t$")
- '(writeroom-fullscreen-effect (quote maximized)))
+ '(writeroom-fullscreen-effect 'maximized))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -228,7 +226,8 @@
   (kill-buffer-and-window))
 (define-key org-journal-mode-map (kbd "C-x C-s") 'org-journal-save-entry-and-exit)
 ;; Add clocktable at the beginning of header file 07/08/20
-(setq org-journal-file-header "#+BEGIN: clocktable :scope file :maxlevel 9 :block today :scope agenda :fileskip0 t")
+(setq org-journal-file-header "#+BEGIN: clocktable :scope file :maxlevel 9 :block today :scope agenda :fileskip0 t
+#+END")
 
 
 (global-set-key [f8] 'rename-buffer)
@@ -237,13 +236,13 @@
 ;; Helm bibtex 04/01
 (autoload 'helm-bibtex "helm-bibtex" "" t)
 (setq bibtex-completion-bibliography
-      '("/Users/dgonzalez/Documents/library.bib"))
+      '("/Users/dgonzalez/org-roam/zotero-library.bib"))
 
-;;(setq bibtex-completion-format-citation-functions
-;;  '((org-mode      . bibtex-completion-format-citation-default)
-;;    (latex-mode    . bibtex-completion-format-citation-cite)
-;;    (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
-;;    (default       . bibtex-completion-format-citation-default)))
+(setq bibtex-completion-format-citation-functions
+ '((org-mode      . bibtex-completion-format-citation-default)
+   (latex-mode    . bibtex-completion-format-citation-cite)
+   (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
+   (default       . bibtex-completion-format-citation-default)))
 
 ;;Org-roam 04/12/20
 (use-package org-roam
@@ -260,6 +259,7 @@
               (("C-c n i" . org-roam-insert))
               (("C-c n I" . org-roam-insert-immediate))))
 
+(require 'org-roam-protocol)
 (setq org-roam-link-title-format "R:%s")
 
 ;; I like my filenames to be only given by timestamp, so removing title (which can change.
@@ -277,18 +277,34 @@
   :bind
   ("C-c n d" . deft)
   :custom
-  (deft-recursive t)
+  ;; We don't want recursion. The reason is that we have the /ref subdirectory for literature notes, and I don't want to clutter my deft results
+  (deft-recursive nil)
   (deft-use-filter-string-for-filename t)
   (deft-default-extension "org")
   (deft-directory "~/org-roam"))
 
-;; (setq reftex-default-bibliography '("/Users/dgonzalez/Documents/library.bib"))
 
-;; ;; see org-ref for use of these variables
-;; (setq org-ref-default-bibliography '("/Users/dgonzalez/Documents/library.bib"))
-;; (setq bibtex-completion-bibliography '("/Users/dgonzalez/Documents/library.bib"))
 
-;; (use-package org-ref)
+
+(use-package org-ref)
+;; see org-ref for use of these variables
+(setq reftex-default-bibliography '("/Users/dgonzalez/org-roam/zotero-library.bib"))
+(setq org-ref-default-bibliography '("/Users/dgonzalez/org-roam/zotero-library.bib"))
+(setq org-ref-bibliography-notes '("/Users/dgonzalez/org-roam/bibnotes.org"))
+
+;; Literature notes in org-roam 08/22/20
+(use-package org-roam-bibtex
+  :after org-roam
+  :hook (org-roam-mode . org-roam-bibtex-mode)
+  :bind (:map org-mode-map
+         (("C-c n a" . orb-note-actions))))
+
+(setq orb-templates
+      '(("r" "ref" plain (function org-roam-capture--get-point) ""
+         :file-name "refs/${citekey}"
+         :head "#+TITLE: ${citekey}: ${title}\n#+ROAM_KEY: ${ref}\n" ; <--
+         :unnarrowed t)))
+
 
 
 ;; Enable ligature for FiraCode
@@ -337,7 +353,7 @@
 ;; Add hook to Pomidor to record completed pomodoros in org journal 05/07/20
 (use-package pomidor)
 (defun pomidor-insert-org-journal ()
-  ;; Prompts the user to provide what was done during a pomodoro and adds it to the journal file
+  "Prompt the user to provide what was done during a pomodoro and add it to the journal file."
   ;; with a timestamp
 	  (org-journal-new-entry nil)
 	  (insert (concat (read-string "What did you do in this Pomodoro? ") " :POMODORO:"))
@@ -345,7 +361,7 @@
 	  (delete-window))
 
 (defun pomidor-after-work-hook ()
-  ;; Hook to execute after work. Right when we enter the break state
+  "Hook to execute after work.  Right when we enter the break state."
   (let ((state (pomidor--current-state)))
     (if (pomidor--break state)
 	  (pomidor-insert-org-journal))))
@@ -396,8 +412,10 @@
 (eval-after-load "org"
   '(require 'ox-gfm nil t))
 
+;;(use-package company-capf)
 (use-package company-lsp)
 ;;(require 'company-lsp)
+;;(push 'company-capf company-backends)
 (push 'company-lsp company-backends)
 
 ;; Set up emacsclient for editing commands. See Bashrc too 08/07/20
@@ -433,10 +451,10 @@
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
 	 (python-mode . lsp-ui-mode)))
 
-(use-package whitespace
-  :ensure t
-  :init
-  (add-hook 'python-mode-hook 'whitespace-mode))
+;; (use-package whitespace
+;;   :ensure t
+;;   :init
+;;   (add-hook 'python-mode-hook 'whitespace-mode))
 ;; if you are helm user
 (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 
@@ -489,3 +507,9 @@
 (fset 'my-move-to-trash "mTrash")
 (define-key mu4e-headers-mode-map (kbd "d") 'my-move-to-trash)
 (define-key mu4e-view-mode-map (kbd "d") 'my-move-to-trash)
+
+;; Nice! Show helmp completion in a posframe. "Floating" Window. Very neat, and doesn't mess up with the buffer 23/08/2020
+(use-package helm-posframe)
+(helm-posframe-enable)
+
+;;(require 'org-attach-git)
