@@ -8,7 +8,7 @@
    '("aded61687237d1dff6325edb492bde536f40b048eab7246c61d5c6643c696b7f" "939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "e1d09f1b2afc2fed6feb1d672be5ec6ae61f84e058cb757689edb669be926896" default))
  '(deft-default-extension "org" t)
  '(deft-directory "~/org-roam" t)
- '(deft-recursive t t)
+ '(deft-recursive nil t)
  '(deft-use-filter-string-for-filename t t)
  '(display-time-mode t)
  '(global-display-line-numbers-mode t)
@@ -16,7 +16,7 @@
  '(inhibit-startup-screen t)
  '(org-roam-directory "~/org-roam")
  '(package-selected-packages
-   '(helm-postframe helm-posframe org-roam-bibtex define-word company-capf lsp-ui moody mu4e lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode))
+   '(hyperbole pinboard org-download nov helm-postframe helm-posframe org-roam-bibtex define-word company-capf lsp-ui moody mu4e lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode))
  '(send-mail-function 'sendmail-send-it)
  '(show-paren-mode t)
  '(tool-bar-mode nil)
@@ -29,6 +29,7 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "Fira Code" :foundry "nil" :slant normal :weight normal :height 181 :width normal)))))
 
+(setq personal-host "Daniels-MacBook-Pro.local")
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
@@ -83,9 +84,9 @@
 
 ;; Kill non matching buffers to clean up 03/28/19
 (defun kill-non-matching-buffers ()
-  "Kill buffers that don't match \"shell\" or \"scratch\". Or any internal buffers for that matter"
+  "Kill buffers that don't match \"shell\" or \"scratch\". Or any internal buffers for that matter."
   (interactive)
-  ;; dont set a global variable 
+  ;; dont set a global variable
   ;; tempoary bind it with let
   (let ((list (buffer-list)))
     (while list
@@ -233,77 +234,120 @@
 (global-set-key [f8] 'rename-buffer)
 
 
-;; Helm bibtex 04/01
-(autoload 'helm-bibtex "helm-bibtex" "" t)
-(setq bibtex-completion-bibliography
-      '("/Users/dgonzalez/org-roam/zotero-library.bib"))
+(when (string= (system-name) personal-host)
+  ;; Helm bibtex 04/01
+  (autoload 'helm-bibtex "helm-bibtex" "" t)
+  (setq bibtex-completion-bibliography
+	'("/Users/dgonzalez/org-roam/zotero-library.bib"))
 
-(setq bibtex-completion-format-citation-functions
- '((org-mode      . bibtex-completion-format-citation-default)
-   (latex-mode    . bibtex-completion-format-citation-cite)
-   (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
-   (default       . bibtex-completion-format-citation-default)))
+  (setq bibtex-completion-format-citation-functions
+	'((org-mode      . bibtex-completion-format-citation-default)
+	  (latex-mode    . bibtex-completion-format-citation-cite)
+	  (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
+	  (default       . bibtex-completion-format-citation-default)))
 
-;;Org-roam 04/12/20
-(use-package org-roam
-      :ensure t
-      :hook
-      (after-init . org-roam-mode)
-      :custom
-      (org-roam-directory "~/org-roam")
-      :bind (:map org-roam-mode-map
-              (("C-c n l" . org-roam)
-               ("C-c n f" . org-roam-find-file)
-               ("C-c n g" . org-roam-graph-show))
-              :map org-mode-map
-              (("C-c n i" . org-roam-insert))
-              (("C-c n I" . org-roam-insert-immediate))))
+  ;;Org-roam 04/12/20
+  (use-package org-roam
+    :ensure t
+    :hook
+    (after-init . org-roam-mode)
+    :custom
+    (org-roam-directory "~/org-roam")
+    :bind (:map org-roam-mode-map
+		(("C-c n l" . org-roam)
+		 ("C-c n f" . org-roam-find-file)
+		 ("C-c n g" . org-roam-graph-show))
+		:map org-mode-map
+		(("C-c n i" . org-roam-insert))
+		(("C-c n I" . org-roam-insert-immediate))))
 
-(require 'org-roam-protocol)
-(setq org-roam-link-title-format "R:%s")
+  (require 'org-roam-protocol)
+  (setq org-roam-link-title-format "R:%s")
 
-;; I like my filenames to be only given by timestamp, so removing title (which can change.
-(setq org-roam-capture-templates
-  '(("d" "default" plain (function org-roam-capture--get-point)
-     "%?"
-     :file-name "%<%Y%m%d%H%M%S>"
-     :head "#+TITLE: ${title}\n"
-     :unnarrowed t)))
-(setq org-roam-graph-executable "/usr/local/bin/dot")
-(setq org-roam-graph-viewer "/Applications/Firefox Nightly.app/Contents/MacOS/firefox")
+  ;; I like my filenames to be only given by timestamp, so removing title (which can change.
+  (setq org-roam-capture-templates
+	'(("d" "default" plain (function org-roam-capture--get-point)
+	   "%?"
+	   :file-name "%<%Y%m%d%H%M%S>"
+	   :head "#+TITLE: ${title}\n"
+	   :unnarrowed t)))
+  (setq org-roam-graph-executable "/usr/local/bin/dot")
+  (setq org-roam-graph-viewer "/Applications/Firefox Nightly.app/Contents/MacOS/firefox")
 
-(use-package deft
-  :after org
-  :bind
-  ("C-c n d" . deft)
-  :custom
-  ;; We don't want recursion. The reason is that we have the /ref subdirectory for literature notes, and I don't want to clutter my deft results
-  (deft-recursive nil)
-  (deft-use-filter-string-for-filename t)
-  (deft-default-extension "org")
-  (deft-directory "~/org-roam"))
-
-
+  (use-package deft
+    :after org
+    :bind
+    ("C-c n d" . deft)
+    :custom
+    ;; We don't want recursion. The reason is that we have the /ref subdirectory for literature notes, and I don't want to clutter my deft results
+    (deft-recursive nil)
+    (deft-use-filter-string-for-filename t)
+    (deft-default-extension "org")
+    (deft-directory "~/org-roam"))
 
 
-(use-package org-ref)
-;; see org-ref for use of these variables
-(setq reftex-default-bibliography '("/Users/dgonzalez/org-roam/zotero-library.bib"))
-(setq org-ref-default-bibliography '("/Users/dgonzalez/org-roam/zotero-library.bib"))
-(setq org-ref-bibliography-notes '("/Users/dgonzalez/org-roam/bibnotes.org"))
 
-;; Literature notes in org-roam 08/22/20
-(use-package org-roam-bibtex
-  :after org-roam
-  :hook (org-roam-mode . org-roam-bibtex-mode)
-  :bind (:map org-mode-map
-         (("C-c n a" . orb-note-actions))))
 
-(setq orb-templates
-      '(("r" "ref" plain (function org-roam-capture--get-point) ""
-         :file-name "refs/${citekey}"
-         :head "#+TITLE: ${citekey}: ${title}\n#+ROAM_KEY: ${ref}\n" ; <--
-         :unnarrowed t)))
+  (use-package org-ref)
+  ;; see org-ref for use of these variables
+  (setq reftex-default-bibliography '("/Users/dgonzalez/org-roam/zotero-library.bib"))
+  (setq org-ref-default-bibliography '("/Users/dgonzalez/org-roam/zotero-library.bib"))
+  (setq org-ref-bibliography-notes '("/Users/dgonzalez/org-roam/bibnotes.org"))
+
+  ;; Literature notes in org-roam 08/22/20
+  (use-package org-roam-bibtex
+    :after org-roam
+    :hook (org-roam-mode . org-roam-bibtex-mode)
+    :bind (:map org-mode-map
+		(("C-c n a" . orb-note-actions))))
+
+  (setq orb-templates
+	'(("r" "ref" plain (function org-roam-capture--get-point) ""
+           :file-name "refs/${citekey}"
+           :head "#+TITLE: ${citekey}: ${title}\n#+ROAM_KEY: ${ref}\n" ; <--
+           :unnarrowed t)))
+
+  ;; Add mu4e mail client
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
+  (require 'mu4e)
+
+  (setq
+   mue4e-headers-skip-duplicates  t
+   mu4e-view-show-images t
+   mu4e-view-show-addresses t
+   mu4e-compose-format-flowed nil
+   mu4e-date-format "%y/%m/%d"
+   mu4e-headers-date-format "%Y/%m/%d"
+   mu4e-change-filenames-when-moving t
+   mu4e-attachments-dir "~/Downloads"
+   user-mail-address "dan@danielgplaza.com"
+
+   mu4e-maildir       "~/Maildir/fastmail"   ;; top-level Maildir
+   ;; note that these folders below must start with /
+   ;; the paths are relative to maildir root
+   mu4e-refile-folder "/Archive"
+   mu4e-sent-folder   "/Sent"
+   mu4e-drafts-folder "/Drafts"
+   mu4e-trash-folder  "/Trash")
+
+  ;; this setting allows to re-sync and re-index mail
+  ;; by pressing U
+  (setq mu4e-get-mail-command  "mbsync -a")
+
+
+  (setq
+   message-send-mail-function   'smtpmail-send-it
+   smtpmail-default-smtp-server "smtp.fastmail.com"
+   smtpmail-smtp-server         "smtp.fastmail.com"
+   smtpmail-stream-type 'starttls
+   smtpmail-smtp-service 587
+   smtp-local-domain "fastmail.com")
+
+  (global-set-key (kbd "C-x m") 'mu4e)
+
+  (fset 'my-move-to-trash "mTrash")
+  (define-key mu4e-headers-mode-map (kbd "d") 'my-move-to-trash)
+  (define-key mu4e-view-mode-map (kbd "d") 'my-move-to-trash))
 
 
 
@@ -466,50 +510,18 @@
 ;; Add pass major mode 08/07/20
 (use-package pass)
 
-;; Add mu4e mail client
-(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
-(require 'mu4e)
 
-(setq
- mue4e-headers-skip-duplicates  t
- mu4e-view-show-images t
- mu4e-view-show-addresses t
- mu4e-compose-format-flowed nil
- mu4e-date-format "%y/%m/%d"
- mu4e-headers-date-format "%Y/%m/%d"
- mu4e-change-filenames-when-moving t
- mu4e-attachments-dir "~/Downloads"
- user-mail-address "dan@danielgplaza.com"
-
- mu4e-maildir       "~/Maildir/fastmail"   ;; top-level Maildir
- ;; note that these folders below must start with /
- ;; the paths are relative to maildir root
- mu4e-refile-folder "/Archive"
- mu4e-sent-folder   "/Sent"
- mu4e-drafts-folder "/Drafts"
- mu4e-trash-folder  "/Trash")
-
-;; this setting allows to re-sync and re-index mail
-;; by pressing U
-(setq mu4e-get-mail-command  "mbsync -a")
-
-
-(setq
- message-send-mail-function   'smtpmail-send-it
- smtpmail-default-smtp-server "smtp.fastmail.com"
- smtpmail-smtp-server         "smtp.fastmail.com"
- smtpmail-stream-type 'starttls
- smtpmail-smtp-service 587
- smtp-local-domain "fastmail.com")
-
-(global-set-key (kbd "C-x m") 'mu4e)
-
-(fset 'my-move-to-trash "mTrash")
-(define-key mu4e-headers-mode-map (kbd "d") 'my-move-to-trash)
-(define-key mu4e-view-mode-map (kbd "d") 'my-move-to-trash)
 
 ;; Nice! Show helmp completion in a posframe. "Floating" Window. Very neat, and doesn't mess up with the buffer 23/08/2020
-(use-package helm-posframe)
-(helm-posframe-enable)
+;;(use-package helm-posframe)
+;;(helm-posframe-enable)
+;;Doesnt work very well, sometimes the floating windo get stuck
 
 ;;(require 'org-attach-git)
+
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+
+(require 'org-download)
+
+;; Drag-and-drop to `dired`
+(add-hook 'dired-mode-hook 'org-download-enable)
