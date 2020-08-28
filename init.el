@@ -1,34 +1,6 @@
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(column-number-mode t)
- '(custom-safe-themes
-   '("aded61687237d1dff6325edb492bde536f40b048eab7246c61d5c6643c696b7f" "939ea070fb0141cd035608b2baabc4bd50d8ecc86af8528df9d41f4d83664c6a" "e1d09f1b2afc2fed6feb1d672be5ec6ae61f84e058cb757689edb669be926896" default))
- '(deft-default-extension "org" t)
- '(deft-directory "~/org-roam" t)
- '(deft-recursive nil t)
- '(deft-use-filter-string-for-filename t t)
- '(display-time-mode t)
- '(global-display-line-numbers-mode t)
- '(helm-completion-style 'emacs)
- '(inhibit-startup-screen t)
- '(org-roam-directory "~/org-roam")
- '(package-selected-packages
-   '(hyperbole pinboard org-download nov helm-postframe helm-posframe org-roam-bibtex define-word company-capf lsp-ui moody mu4e lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package ace-window yasnippet-snippets company markdown-mode csv-mode))
- '(send-mail-function 'sendmail-send-it)
- '(show-paren-mode t)
- '(tool-bar-mode nil)
- '(verilog-typedef-regexp "_t$")
- '(writeroom-fullscreen-effect 'maximized))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Fira Code" :foundry "nil" :slant normal :weight normal :height 181 :width normal)))))
-
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
+(setq inhibit-startup-screen t)
 (setq personal-host "Daniels-MacBook-Pro.local")
 (require 'package)
 (setq package-enable-at-startup nil)
@@ -445,6 +417,13 @@
     (set-face-attribute 'mode-line-inactive nil :underline  line)
     (set-face-attribute 'mode-line          nil :box        nil)
     (set-face-attribute 'mode-line-inactive nil :box        nil)))
+
+
+;; (use-package modus-operandi-theme :ensure)
+;; (load-theme 'modus-operandi t)
+
+;; (use-package modus-vivendi-theme :ensure)
+;; (load-theme 'modus-vivendi t)
 
 (use-package moody
   :config
