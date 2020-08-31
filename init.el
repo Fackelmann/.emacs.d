@@ -211,6 +211,7 @@
   (autoload 'helm-bibtex "helm-bibtex" "" t)
   (setq bibtex-completion-bibliography
 	'("/Users/dgonzalez/org-roam/zotero-library.bib"))
+  (setq bibtex-completion-pdf-field "file")
 
   (setq bibtex-completion-format-citation-functions
 	'((org-mode      . bibtex-completion-format-citation-default)
@@ -319,7 +320,22 @@
 
   (fset 'my-move-to-trash "mTrash")
   (define-key mu4e-headers-mode-map (kbd "d") 'my-move-to-trash)
-  (define-key mu4e-view-mode-map (kbd "d") 'my-move-to-trash))
+  (define-key mu4e-view-mode-map (kbd "d") 'my-move-to-trash)
+
+  (setenv "PKG_CONFIG_PATH"
+          (f-join
+           (file-name-as-directory
+            (nth 0
+		 (split-string
+                  (shell-command-to-string "brew --prefix"))))
+           "Cellar" "libffi" "3.2.1" "lib" "pkgconfig"))
+  (use-package pdf-tools
+    :ensure t
+    :mode ("\\.pdf\\'" . pdf-view-mode)
+    :config
+    (pdf-tools-install)
+    (setq-default pdf-view-display-size 'fit-page)
+    (setq pdf-annot-activate-created-annotations t)))
 
 
 
@@ -460,6 +476,8 @@
   :ensure t
   :init (global-flycheck-mode))
 
+
+
 (use-package lsp-mode
     :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
 	   (python-mode . lsp)
@@ -469,6 +487,7 @@
                         (lsp-enable-which-key-integration)))))
      :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
      :commands lsp)
+(add-hook 'python-mode-hook 'display-fill-column-indicator-mode)
 
 (use-package lsp-ui
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
@@ -498,9 +517,8 @@
 
 ;;(require 'org-attach-git)
 
-(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-
-(require 'org-download)
+(use-package org-download)
 
 ;; Drag-and-drop to `dired`
 (add-hook 'dired-mode-hook 'org-download-enable)
+;;(add-hook 'python-mode 'fci-mode)
