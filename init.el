@@ -173,6 +173,11 @@
 (setq org-outline-path-complete-in-steps nil)
 (setq org-refile-allow-creating-parent-nodes 'confirm)
 
+;; Set up org habits 09/11/20
+(add-to-list 'org-modules 'org-habit t)
+(setq org-habit-show-habits-only-for-today nil)
+(setq org-agenda-repeating-timestamp-show-all nil)
+
 ;;(setq org-startup-indented t)
 ;; --- Magit
 ;; Bind magit C-x g
@@ -409,6 +414,11 @@
 
 ;; set up Scheme for SICP 05/09/20
 (setq scheme-program-name "/usr/local/bin/scheme")
+;; set up Sheme for literate programming org mode 09/11/20
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((scheme . t)))
+(setq org-confirm-babel-evaluate nil)
 
 ;; 05/21/20
 (global-set-key [f9] 'toggle-truncate-lines)
@@ -522,3 +532,5 @@
 ;; Drag-and-drop to `dired`
 (add-hook 'dired-mode-hook 'org-download-enable)
 ;;(add-hook 'python-mode 'fci-mode)
+
+(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
