@@ -178,7 +178,9 @@
 (setq org-habit-show-habits-only-for-today nil)
 (setq org-agenda-repeating-timestamp-show-all nil)
 
-;;(setq org-startup-indented t)
+(setq org-startup-indented t)
+(setq org-indent-indentation-level 1)
+(setq org-adapt-indentation nil)
 ;; --- Magit
 ;; Bind magit C-x g
 (use-package magit)
