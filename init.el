@@ -173,6 +173,11 @@
 (setq org-outline-path-complete-in-steps nil)
 (setq org-refile-allow-creating-parent-nodes 'confirm)
 
+;; org agenda settings 09/13/20
+(setq org-agenda-restore-windows-after-quit t)
+(setq org-agenda-time-grid '((daily today require-timed)
+			    (800 900 1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000)
+			    "....." "----------------"))
 ;; Set up org habits 09/11/20
 (add-to-list 'org-modules 'org-habit t)
 (setq org-habit-show-habits-only-for-today nil)
@@ -536,3 +541,20 @@
 ;;(add-hook 'python-mode 'fci-mode)
 
 (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+
+
+;; Capture most used commands
+(use-package keyfreq
+  :init
+  (setq keyfreq-excluded-commands
+	'(self-insert-command
+	  forward-char
+          backward-char
+          previous-line
+          next-line))
+  :config
+  (keyfreq-mode +1)
+  (keyfreq-autosave-mode +1))
+
+;; Trying avy goto 09/14/20
+(global-set-key (kbd "C-:") 'avy-goto-char)

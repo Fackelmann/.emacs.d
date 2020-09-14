@@ -12,3 +12,5 @@
 ** Blogs                                                              :blogs:
 *** https://danielgplaza.com/index.xml
 *** http://feeds.feedburner.com/scotthyoung/HAHx?fmt=xml
+** Hardware                                                        :hardware:
+*** https://www.pine64.org/feed/
