@@ -3,14 +3,14 @@
 
 My emacs config file. Working on moving it to a literate format.
 
-* Moving custom* out of config
+* Moving ~custom*~ out of config
 I don't like the ~custom*~ being saved in my config file. I prefer to have them in their own location.
 #+BEGIN_SRC emacs-lisp
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 #+END_SRC
 
-#+BEGIN_SRC
+#+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-screen t)
 (setq personal-host "Daniels-MacBook-Pro.local")
 (require 'package)
