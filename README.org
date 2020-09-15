@@ -1,37 +1,64 @@
 #+TITLE: Emacs config
 #+AUTHOR: Daniel Gonzalez Plaza
 
-My emacs config file. Working on moving it to a literate format.
+My emacs config file.
 
-* Moving ~custom*~ out of config
-I don't like the ~custom*~ being saved in my config file. I prefer to have them in their own location.
+I'm working on moving it to a literate format. Over the years I have been building it around my usage, and it is a good opportunity to tidy it up and better understand the tool I use most professionally.
+
+* Defaults
+
+I don't like the ~custom*~ being saved in my config file and cluttering it. I prefer to have them in their own location.
 #+BEGIN_SRC emacs-lisp
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 #+END_SRC
 
+Inhibit the startup screen. I'll take the ~scratch~ buffer, thank you very much.
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-screen t)
-(setq personal-host "Daniels-MacBook-Pro.local")
+#+END_SRC
+
+* Package management
+Initialize ~package.el~:
+#+BEGIN_SRC emacs-lisp
 (require 'package)
-(setq package-enable-at-startup nil)
+(package-initialize)
+#+END_SRC
+
+Add Melpa and Elpa:
+
+#+BEGIN_SRC emacs-lisp
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
-(package-initialize)
+#+END_SRC
 
+By default, Emacs automatically loads all installed packages in subsecuent sessions (this is not the same as loading the Lisp libraries). Disable automatic package loading, as we are explicitly loading them
 
+#+BEGIN_SRC emacs-lisp
+(setq package-enable-at-startup nil)
+#+END_SRC
+
+Install ~use-package.el~:
+#+BEGIN_SRC emacs-lisp
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 
 (eval-when-compile
   (require 'use-package))
+#+END_SRC
 
+And treat every package as though it had specified using ~:ensure t~. This will automatically install all packages in a new system.
+#+BEGIN_SRC emacs-lisp
 ;; Install missing packages.
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
 
 ;;Creates new shell
+(setq personal-host "Daniels-MacBook-Pro.local")
 (fset 'nshell
       "\C-u\370shell")
 
