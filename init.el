@@ -500,8 +500,8 @@
 	   (python-mode . lsp)
             ;; if you want which-key integration
             (lsp-mode . (lambda ()
-                      (let ((lsp-keymap-prefix "C-c l"))
-                        (lsp-enable-which-key-integration)))))
+                      (let ((lsp-keymap-prefix "C-c l"))))))
+;;                        (lsp-enable-which-key-integration)))))
      :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
      :commands lsp)
 (add-hook 'python-mode-hook 'display-fill-column-indicator-mode)
@@ -558,3 +558,25 @@
 
 ;; Trying avy goto 09/14/20
 (global-set-key (kbd "C-:") 'avy-goto-char)
+
+;; Configure tramp to work with bash on remote and load my profile 09/14/20
+(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+(setq explicit-shell-file-name "/bin/bash")
+(setq remote-file-name-inhibit-cache nil)
+;; (setq vc-ignore-dir-regexp
+;;       (format "%s\\|%s"
+;;                     vc-ignore-dir-regexp
+;;                     tramp-file-name-regexp))
+(setq tramp-verbose 1)
+
+(lsp-register-client
+       (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
+                     :major-modes '(python-mode)
+                     :remote? t
+		     :server-id 'pyls-remote))
+(setq lsp-restart 'ignore)
+
+;; doom modeline 09/14/20
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
