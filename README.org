@@ -5,20 +5,8 @@ My emacs config file.
 
 I'm working on moving it to a literate format. Over the years I have been building it around my usage, and it is a good opportunity to tidy it up and better understand the tool I use most professionally.
 
-* Defaults
 
-I don't like the ~custom*~ being saved in my config file and cluttering it. I prefer to have them in their own location.
-#+BEGIN_SRC emacs-lisp
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
-#+END_SRC
-
-Inhibit the startup screen. I'll take the ~scratch~ buffer, thank you very much.
-#+BEGIN_SRC emacs-lisp
-(setq inhibit-startup-screen t)
-#+END_SRC
-
-* Package management
+* Package Management
 Initialize ~package.el~:
 #+BEGIN_SRC emacs-lisp
 (require 'package)
@@ -32,13 +20,13 @@ Add Melpa and Elpa:
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 #+END_SRC
 
-By default, Emacs automatically loads all installed packages in subsecuent sessions (this is not the same as loading the Lisp libraries). Disable automatic package loading, as we are explicitly loading them
+By default, Emacs automatically loads all installed packages in subsecuent sessions (this is not the same as loading the Lisp libraries). Disable automatic package loading, as we are explicitly loading them with ~(package-initialize)~.
 
 #+BEGIN_SRC emacs-lisp
 (setq package-enable-at-startup nil)
 #+END_SRC
 
-Install ~use-package.el~:
+Install ~use-package.el~ if it's not installed already:
 #+BEGIN_SRC emacs-lisp
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -50,9 +38,39 @@ Install ~use-package.el~:
 
 And treat every package as though it had specified using ~:ensure t~. This will automatically install all packages in a new system.
 #+BEGIN_SRC emacs-lisp
-;; Install missing packages.
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
+#+END_SRC
+
+
+* Customizing default emacs behavior
+
+I don't like the ~custom*~ variables being saved in my config file and cluttering it. I prefer to have them in their own location.
+#+BEGIN_SRC emacs-lisp
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
+#+END_SRC
+
+Likewise, I don't like having backup ~~~ files all over the place. But they are sometimes useful. This setting saves all of them under the same directory.
+#+BEGIN_SRC emacs-lisp
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+#+END_SRC
+
+Inhibit the startup screen. I'll take the ~scratch~ buffer, thank you very much.
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-screen t)
+#+END_SRC
+
+I barely use the mouse, so the tool-bar is just taking screen real state.
+
+#+BEGIN_SRC emacs-lisp
+(tool-bar-mode -1)
+#+END_SRC
+
+And I like having the clock in the mode line, so I can easily tell the time when I'm in full screen.
+
+#+BEGIN_SRC emacs-lisp
+(display-time-mode 1)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -62,15 +80,6 @@ And treat every package as though it had specified using ~:ensure t~. This will 
 (fset 'nshell
       "\C-u\370shell")
 
-;;(setq make-backup-files nil) ; stop creating ~ files
-;;Backup all files in ~/.emacs.d/backups
-(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-
-;;Remove toolbar
-(tool-bar-mode -1)
-
-;;Display clock
-(display-time-mode 1)
 
 ;; To resync dirs when autocompletion doesn't work
 (global-set-key (kbd "M-<up>") 'shell-resync-dirs)
