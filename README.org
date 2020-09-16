@@ -51,7 +51,7 @@ I don't like the ~custom*~ variables being saved in my config file and clutterin
 (load custom-file)
 #+END_SRC
 
-Likewise, I don't like having backup ~~~ files all over the place. But they are sometimes useful. This setting saves all of them under the same directory.
+Likewise, I don't like having backup files (~) all over the place. But they are sometimes useful. This setting saves all of them under the same directory.
 #+BEGIN_SRC emacs-lisp
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 #+END_SRC
@@ -75,16 +75,19 @@ And I like having the clock in the mode line, so I can easily tell the time when
 
 
 * org mode
+Basic org-mode configuration
 #+BEGIN_SRC emacs-lisp
   ;; Org settings
-  (use-package org)
+  (use-package org
+    :bind (("C-c l" . org-store-link)
+           ("C-c a" . org-agenda)
+           ("C-c c" . org-capture)))
+
   (use-package org-journal)
   (setq org-default-notes-file (concat org-directory "/inbox.org"))
 
 
-  (global-set-key (kbd "C-c l") 'org-store-link)
-  (global-set-key (kbd "C-c a") 'org-agenda)
-  (global-set-key (kbd "C-c c") 'org-capture)
+
 
   (setq org-agenda-file-regexp "\\`\\\([^.].*\\.org\\\|[0-9]\\\{8\\\}\\\(\\.gpg\\\)?\\\)\\'")
   (setq org-agenda-files (list "~/org"
@@ -92,13 +95,6 @@ And I like having the clock in the mode line, so I can easily tell the time when
   (add-to-list 'org-agenda-files org-journal-dir)
 
   (setq org-log-done t)
-
-  ;; Adding some new templates 05/21/20
-  ;; (setq org-capture-templates
-  ;;       '(("t" "Todo" entry (file+headline org-default-notes-file  "Tasks")
-  ;; 	 "* TODO %?\n  %i\n ")
-  ;; 	("n" "Notes" entry (file+headline org-default-notes-file "Notes")
-  ;; 	 "* %?\n %i\n")))
 
   ;; TODO keywords 08/06/20
   (setq org-todo-keywords
@@ -190,6 +186,8 @@ And I like having the clock in the mode line, so I can easily tell the time when
   (eval-after-load "org"
     '(require 'ox-gfm nil t))
 #+END_SRC
+
+* TODO
 
 #+BEGIN_SRC emacs-lisp
 
