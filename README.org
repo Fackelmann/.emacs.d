@@ -73,73 +73,9 @@ And I like having the clock in the mode line, so I can easily tell the time when
 (display-time-mode 1)
 #+END_SRC
 
+
+* org mode
 #+BEGIN_SRC emacs-lisp
-
-  ;;Creates new shell
-  (setq personal-host "Daniels-MacBook-Pro.local")
-  (fset 'nshell
-        "\C-u\370shell")
-
-
-  ;; To resync dirs when autocompletion doesn't work
-  (global-set-key (kbd "M-<up>") 'shell-resync-dirs)
-  (put 'erase-buffer 'disabled nil)
-
-  ;; Enable company mode for all buffers 03/27/19
-  (use-package company
-    :init
-    (add-hook 'after-init-hook 'global-company-mode))
-
-
-  ;; Ace window. I love it! moves to other window by typying character window 03/27/19
-    (use-package ace-window
-    :bind ("C-x o" . ace-window))
-
-  ;; Kill non matching buffers to clean up 03/28/19
-  (defun kill-non-matching-buffers ()
-    "Kill buffers that don't match \"shell\" or \"scratch\". Or any internal buffers for that matter."
-    (interactive)
-    ;; dont set a global variable
-    ;; tempoary bind it with let
-    (let ((list (buffer-list)))
-      (while list
-        ;; again bind buff locally
-        (let ((buff (buffer-name (car list))))
-          (setq list (cdr list))
-          (when (and (not (string-match "shell" buff))
-                     (not (string-match "scratch" buff))
-                     ;; you probably don't want kill internal buffers
-                     ;; which start with space or asterisk
-                     (not (string-match "\\` " buff))
-                     (not (string-match "\\`\\*" buff)))
-            (kill-buffer buff))))))
-
-
-  (global-set-key [f5] 'kill-non-matching-buffers)
-
-
-  ;; Display line numbers
-  (global-display-line-numbers-mode)
-  ;; For older versions of emacs
-  ;;(linum-mode)
-
-  ;; Enable Elpy 06/01/2019
-  ;;(elpy-enable)
-
-  ;; set python shell interpreter version for elpy 06/01/2019
-  (setq python-shell-interpreter "/usr/local/bin/python3")
-
-
-
-  ;; Add fill column indicator mode to python mode
-  (setq-default fill-column 80)
-  ;;(add-hook 'python-mode-hook 'fci-mode)
-  ;;(add-hook 'python-mode-hook 'flycheck-mode)
-  ;;Show whitespaces in python 12/10/19
-  ;;(add-hook 'python-mode-hook 'whitespace-mode)
-  ;;Dunno 12/10/19
-  (put 'scroll-left 'disabled nil)
-
   ;; Org settings
   (use-package org)
   (use-package org-journal)
@@ -227,20 +163,6 @@ And I like having the clock in the mode line, so I can easily tell the time when
   (setq org-startup-indented t)
   (setq org-indent-indentation-level 1)
   (setq org-adapt-indentation nil)
-  ;; --- Magit
-  ;; Bind magit C-x g
-  ;; 12/13/19 Stop magit from asking to save modified files every damn time I try to do somethin
-  (use-package magit
-    :bind ("C-x g" . magit-status)
-    :config (setq magit-save-repository-buffers nil))
-
-
-
-
-  ;; Enabling undo tree mode 01/02/20
-  (use-package undo-tree
-    :init (global-undo-tree-mode))
-
 
   ;; Binding org journal scheduled entry 02/11/20
   (global-set-key (kbd "C-c C-k") 'org-journal-new-scheduled-entry)
@@ -257,6 +179,103 @@ And I like having the clock in the mode line, so I can easily tell the time when
   ;; Add clocktable at the beginning of header file 07/08/20
   (setq org-journal-file-header "#+BEGIN: clocktable :scope file :maxlevel 9 :block today :scope agenda :fileskip0 t
   ,#+END")
+
+  ;; set up Sheme for literate programming org mode 09/11/20
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((scheme . t)))
+  (setq org-confirm-babel-evaluate nil)
+
+  ;; Enable markdown export org mode
+  (eval-after-load "org"
+    '(require 'ox-gfm nil t))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+
+  ;;Creates new shell
+  (setq personal-host "Daniels-MacBook-Pro.local")
+  (fset 'nshell
+        "\C-u\370shell")
+
+
+  ;; To resync dirs when autocompletion doesn't work
+  (global-set-key (kbd "M-<up>") 'shell-resync-dirs)
+  (put 'erase-buffer 'disabled nil)
+
+  ;; Enable company mode for all buffers 03/27/19
+  (use-package company
+    :init
+    (add-hook 'after-init-hook 'global-company-mode))
+
+
+  ;; Ace window. I love it! moves to other window by typying character window 03/27/19
+  (use-package ace-window
+    :bind ("C-x o" . ace-window)
+    :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
+  ;; Kill non matching buffers to clean up 03/28/19
+  (defun kill-non-matching-buffers ()
+    "Kill buffers that don't match \"shell\" or \"scratch\". Or any internal buffers for that matter."
+    (interactive)
+    ;; dont set a global variable
+    ;; tempoary bind it with let
+    (let ((list (buffer-list)))
+      (while list
+        ;; again bind buff locally
+        (let ((buff (buffer-name (car list))))
+          (setq list (cdr list))
+          (when (and (not (string-match "shell" buff))
+                     (not (string-match "scratch" buff))
+                     ;; you probably don't want kill internal buffers
+                     ;; which start with space or asterisk
+                     (not (string-match "\\` " buff))
+                     (not (string-match "\\`\\*" buff)))
+            (kill-buffer buff))))))
+
+
+  (global-set-key [f5] 'kill-non-matching-buffers)
+
+
+  ;; Display line numbers
+  (global-display-line-numbers-mode)
+  ;; For older versions of emacs
+  ;;(linum-mode)
+
+  ;; Enable Elpy 06/01/2019
+  ;;(elpy-enable)
+
+  ;; set python shell interpreter version for elpy 06/01/2019
+  (setq python-shell-interpreter "/usr/local/bin/python3")
+
+
+
+  ;; Add fill column indicator mode to python mode
+  (setq-default fill-column 80)
+  ;;(add-hook 'python-mode-hook 'fci-mode)
+  ;;(add-hook 'python-mode-hook 'flycheck-mode)
+  ;;Show whitespaces in python 12/10/19
+  ;;(add-hook 'python-mode-hook 'whitespace-mode)
+  ;;Dunno 12/10/19
+  (put 'scroll-left 'disabled nil)
+
+
+  ;; --- Magit
+  ;; Bind magit C-x g
+  ;; 12/13/19 Stop magit from asking to save modified files every damn time I try to do somethin
+  (use-package magit
+    :bind ("C-x g" . magit-status)
+    :config (setq magit-save-repository-buffers nil))
+
+
+
+
+  ;; Enabling undo tree mode 01/02/20
+  (use-package undo-tree
+    :init (global-undo-tree-mode))
+
+
+
 
 
   (global-set-key [f8] 'rename-buffer)
@@ -443,16 +462,16 @@ And I like having the clock in the mode line, so I can easily tell the time when
   (defun pomidor-insert-org-journal ()
     "Prompt the user to provide what was done during a pomodoro and add it to the journal file."
     ;; with a timestamp
-            (org-journal-new-entry nil)
-            (insert (concat (read-string "What did you do in this Pomodoro? ") " :POMODORO:"))
-            ;; And close org-journal window
-            (delete-window))
+    (org-journal-new-entry nil)
+    (insert (concat (read-string "What did you do in this Pomodoro? ") " :POMODORO:"))
+    ;; And close org-journal window
+    (delete-window))
 
   (defun pomidor-after-work-hook ()
     "Hook to execute after work.  Right when we enter the break state."
     (let ((state (pomidor--current-state)))
       (if (pomidor--break state)
-            (pomidor-insert-org-journal))))
+          (pomidor-insert-org-journal))))
 
   (advice-add 'pomidor-break :after #'pomidor-after-work-hook)
 
@@ -465,11 +484,7 @@ And I like having the clock in the mode line, so I can easily tell the time when
 
   ;; set up Scheme for SICP 05/09/20
   (setq scheme-program-name "/usr/local/bin/scheme")
-  ;; set up Sheme for literate programming org mode 09/11/20
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((scheme . t)))
-  (setq org-confirm-babel-evaluate nil)
+
 
   ;; 05/21/20
   (global-set-key [f9] 'toggle-truncate-lines)
@@ -508,9 +523,7 @@ And I like having the clock in the mode line, so I can easily tell the time when
     (moody-replace-mode-line-buffer-identification)
     (moody-replace-vc-mode))
 
-  ;; Enable markdown export org mode
-  (eval-after-load "org"
-    '(require 'ox-gfm nil t))
+
 
   ;;(use-package company-capf)
   (use-package company-lsp)
@@ -540,14 +553,14 @@ And I like having the clock in the mode line, so I can easily tell the time when
 
 
   (use-package lsp-mode
-      :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-             (python-mode . lsp)
-              ;; if you want which-key integration
-              (lsp-mode . (lambda ()
-                        (let ((lsp-keymap-prefix "C-c l"))))))
-  ;;                        (lsp-enable-which-key-integration)))))
-       :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-       :commands lsp)
+    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+           (python-mode . lsp)
+           ;; if you want which-key integration
+           (lsp-mode . (lambda ()
+                         (let ((lsp-keymap-prefix "C-c l"))))))
+    ;;                        (lsp-enable-which-key-integration)))))
+    :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+    :commands lsp)
   (add-hook 'python-mode-hook 'display-fill-column-indicator-mode)
 
   (use-package lsp-ui
@@ -584,7 +597,7 @@ And I like having the clock in the mode line, so I can easily tell the time when
   (add-hook 'dired-mode-hook 'org-download-enable)
   ;;(add-hook 'python-mode 'fci-mode)
 
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+
 
 
   ;; Capture most used commands
@@ -614,10 +627,10 @@ And I like having the clock in the mode line, so I can easily tell the time when
   (setq tramp-verbose 1)
 
   (lsp-register-client
-         (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
-                       :major-modes '(python-mode)
-                       :remote? t
-                       :server-id 'pyls-remote))
+   (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
+                    :major-modes '(python-mode)
+                    :remote? t
+                    :server-id 'pyls-remote))
   (setq lsp-restart 'ignore)
 
   ;; doom modeline 09/14/20
