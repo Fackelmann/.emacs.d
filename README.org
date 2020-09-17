@@ -90,7 +90,7 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
     (setq org-default-notes-file (concat org-directory "/inbox.org"))
     (setq org-agenda-file-regexp "\\`\\\([^.].*\\.org\\\|[0-9]\\\{8\\\}\\\(\\.gpg\\\)?\\\)\\'")
     (setq org-agenda-files (list "~/org"
-                               "~/org/work"))
+                                 "~/org/work"))
     (setq org-log-done t)
     (setq org-todo-keywords
           (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -146,7 +146,9 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
     ;; Indentation settings
     (setq org-startup-indented t)
     (setq org-indent-indentation-level 1)
-    (setq org-adapt-indentation nil))
+    (setq org-adapt-indentation nil)
+    ;; Show only current clock instance in mode line
+    (setq org-clock-mode-line-total 'current))
 
 
   ;; set up Scheme for literate programming org mode 09/11/20
