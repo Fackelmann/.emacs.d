@@ -75,10 +75,10 @@ And I like having the clock in the mode line, so I can easily tell the time when
 
 
 * org-mode
-While I do agree with RMS on [[https://lists.gnu.org/archive/html/emacs-devel/2016-06/msg00272.html][his view that org-mode tires to pack too many features]], it doesn't detract for how good it is.
-I use it to write my ideas, to keep track of my projects at work, with (tasks ans subtasks, and timestamps, and time tracking). I even use it to write this file!
+While I do agree with RMS on [[https://lists.gnu.org/archive/html/emacs-devel/2016-06/msg00272.html][his view that org-mode tries to pack too many features]], it doesn't detract for how good it is.
+I use it to write my ideas, to keep track of my projects at work (with tasks ans subtasks, and timestamps, and time tracking). I even use it to write this file!
 
-Many of this settings (mainly for task settings) were taken and adapted from [[http://doc.norang.ca/org-mode.html][Organize your life in plain text!]]
+Many of this settings (mainly the part related to tasks and todos) were taken and adapted from [[http://doc.norang.ca/org-mode.html][Organize your life in plain text!]]
 
 #+BEGIN_SRC emacs-lisp
   ;; Org settings
@@ -149,7 +149,7 @@ Many of this settings (mainly for task settings) were taken and adapted from [[h
     (setq org-adapt-indentation nil))
 
 
-  ;; set up Sheme for literate programming org mode 09/11/20
+  ;; set up Scheme for literate programming org mode 09/11/20
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((scheme . t)))
