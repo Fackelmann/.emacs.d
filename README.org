@@ -42,7 +42,6 @@ And treat every package as though it had specified using ~:ensure t~. This will 
 (setq use-package-always-ensure t)
 #+END_SRC
 
-
 * Customizing default emacs behavior
 
 I don't like the ~custom*~ variables being saved in my config file and cluttering it. I prefer to have them in their own location.
@@ -61,10 +60,11 @@ Inhibit the startup screen. I'll take the ~scratch~ buffer, thank you very much.
 (setq inhibit-startup-screen t)
 #+END_SRC
 
-I barely use the mouse, so the tool-bar is just taking screen real state.
+I barely use the mouse, so the tool bar and menu bar are just taking screen real state.
 
 #+BEGIN_SRC emacs-lisp
 (tool-bar-mode -1)
+(menu-bar-mode -1)
 #+END_SRC
 
 And I like having the clock in the mode line, so I can easily tell the time when I'm in full screen.
@@ -72,7 +72,6 @@ And I like having the clock in the mode line, so I can easily tell the time when
 #+BEGIN_SRC emacs-lisp
 (display-time-mode 1)
 #+END_SRC
-
 
 * org-mode
 While I do agree with RMS on [[https://lists.gnu.org/archive/html/emacs-devel/2016-06/msg00272.html][his view that org-mode tries to pack too many features]], it doesn't detract for how good it is.
@@ -158,6 +157,10 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
   ;; Enable markdown export org mode
   (eval-after-load "org"
     '(require 'ox-gfm nil t))
+
+  (use-package org-download)
+  ;; Drag-and-drop to `dired`
+  (add-hook 'dired-mode-hook 'org-download-enable)
 #+END_SRC
 
 
@@ -173,98 +176,192 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
 
 #+END_SRC
 
-* TODO
+* Packages
 
+Autocompletion with company mode.
 #+BEGIN_SRC emacs-lisp
-
-  ;;Creates new shell
-  (setq personal-host "Daniels-MacBook-Pro.local")
-  (fset 'nshell
-        "\C-u\370shell")
-
-
-  ;; To resync dirs when autocompletion doesn't work
-  (global-set-key (kbd "M-<up>") 'shell-resync-dirs)
-  (put 'erase-buffer 'disabled nil)
-
-  ;; Enable company mode for all buffers 03/27/19
   (use-package company
     :init
     (add-hook 'after-init-hook 'global-company-mode))
+#+END_SRC
 
+ace-window. Jump to other window by typing a character. And set the characters so they are all in the home row.
 
-  ;; Ace window. I love it! moves to other window by typying character window 03/27/19
+#+BEGIN_SRC emacs-lisp
   (use-package ace-window
     :bind ("C-x o" . ace-window)
     :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+#+END_SRC
 
-  ;; Kill non matching buffers to clean up 03/28/19
-  (defun kill-non-matching-buffers ()
-    "Kill buffers that don't match \"shell\" or \"scratch\". Or any internal buffers for that matter."
-    (interactive)
-    ;; dont set a global variable
-    ;; tempoary bind it with let
-    (let ((list (buffer-list)))
-      (while list
-        ;; again bind buff locally
-        (let ((buff (buffer-name (car list))))
-          (setq list (cdr list))
-          (when (and (not (string-match "shell" buff))
-                     (not (string-match "scratch" buff))
-                     ;; you probably don't want kill internal buffers
-                     ;; which start with space or asterisk
-                     (not (string-match "\\` " buff))
-                     (not (string-match "\\`\\*" buff)))
-            (kill-buffer buff))))))
+Magit. Use git without the command line.
 
-
-  (global-set-key [f5] 'kill-non-matching-buffers)
-
-
-  ;; Display line numbers
-  (global-display-line-numbers-mode)
-  ;; For older versions of emacs
-  ;;(linum-mode)
-
-  ;; Enable Elpy 06/01/2019
-  ;;(elpy-enable)
-
-  ;; set python shell interpreter version for elpy 06/01/2019
-  (setq python-shell-interpreter "/usr/local/bin/python3")
-
-
-
-  ;; Add fill column indicator mode to python mode
-  (setq-default fill-column 80)
-  ;;(add-hook 'python-mode-hook 'fci-mode)
-  ;;(add-hook 'python-mode-hook 'flycheck-mode)
-  ;;Show whitespaces in python 12/10/19
-  ;;(add-hook 'python-mode-hook 'whitespace-mode)
-  ;;Dunno 12/10/19
-  (put 'scroll-left 'disabled nil)
-
-
-  ;; --- Magit
-  ;; Bind magit C-x g
-  ;; 12/13/19 Stop magit from asking to save modified files every damn time I try to do somethin
+#+BEGIN_SRC emacs-lisp
   (use-package magit
     :bind ("C-x g" . magit-status)
     :config (setq magit-save-repository-buffers nil))
+#+END_SRC
 
+undo-tree graphically shows the state of emacs undo tree and lets you navigate through it.
 
-
-
-  ;; Enabling undo tree mode 01/02/20
+#+BEGIN_SRC emacs-lisp
   (use-package undo-tree
     :init (global-undo-tree-mode))
+#+END_SRC
+
+helm. Incremental completion and selection
+
+#+BEGIN_SRC emacs-lisp
+  ;; Enable helm mode 04/19/20
+  ;; Ido mode didn't allow me to add a space to a filename in org roam
+  ;; In any case helm seems more popular nowadays
+
+  (use-package helm)
+  (helm-mode 1)
+  (define-key global-map [remap find-file] 'helm-find-files)
+  (define-key global-map [remap occur] 'helm-occur)
+  (define-key global-map [remap list-buffers] 'helm-buffers-list)
+  (define-key global-map [remap dabbrev-expand] 'helm-dabbrev)
+  (define-key global-map [remap execute-extended-command] 'helm-M-x)
+  (define-key global-map [remap apropos-command] 'helm-apropos)
+  (unless (boundp 'completion-in-region-function)
+    (define-key lisp-interaction-mode-map [remap completion-at-point] 'helm-lisp-completion-at-point)
+    (define-key emacs-lisp-mode-map       [remap completion-at-point] 'helm-lisp-completion-at-point))
+  (add-hook 'kill-emacs-hook #'(lambda () (and (file-exists-p "/tmp/helm-cfg.el") (delete-file "/tmp/helm-cfg.el"))))
+#+END_SRC
+
+Activate fuzzy matching in ~helm~.
+#+BEGIN_SRC emacs-lisp
+  (setq helm-mode-fuzzy-match t)
+  (setq helm-completion-in-region-fuzzy-match t)
+  (setq helm-completion-style 'emacs)
+  (setq completion-styles (if (version<= emacs-version "27.0") '(helm-flex) '(flex)))
+#+END_SRC
+
+Save and record macros for later use.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package elmacro)
+  (elmacro-mode)
+#+END_SRC
+
+Emacs native feed reader:
+#+BEGIN_SRC emacs-lisp
+  (use-package elfeed)
+  (use-package elfeed-org)
+  (elfeed-org)
+  (global-set-key (kbd "C-x w") 'elfeed)
+  (setq browse-url-browser-function 'eww-browse-url)
+#+END_SRC
+
+Language Server Protocol mode. Access docstrings, definitions, etc. 
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+           (python-mode . lsp)
+           ;; if you want which-key integration
+           (lsp-mode . (lambda ()
+                         (let ((lsp-keymap-prefix "C-c l"))))))
+    ;;                        (lsp-enable-which-key-integration)))))
+    :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+    :commands lsp)
+
+#+END_SRC
+
+Helm support for lsp.
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+
+;;  (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+#+END_SRC
+
+Shows lsp information in a hover posframe.
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-ui
+    :hook ((python-mode . lsp-ui-mode)))
+#+END_SRC
 
 
 
+And autocompletion with lsp
+#+BEGIN_SRC emacs-lisp
+  (use-package company-lsp)
+  (push 'company-lsp company-backends)
+#+END_SRC
 
+Record used keys, to improve workflow.
+#+BEGIN_SRC emacs-lisp
+  (use-package keyfreq
+    :init
+    (setq keyfreq-excluded-commands
+          '(self-insert-command
+            forward-char
+            backward-char
+            previous-line
+            next-line))
+    :config
+    (keyfreq-mode +1)
+    (keyfreq-autosave-mode +1))
+#+END_SRC
 
-  (global-set-key [f8] 'rename-buffer)
+Eye candy for the mode line.
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1))
+#+END_SRC
 
+Jump to a specific character in the visible frames.
 
+#+BEGIN_SRC emacs-lisp
+(use-package avy
+  :bind ("C-:" . avy-goto-char))
+#+END_SRC
+
+Syntax checking in Python with flycheck.
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :init (global-flycheck-mode))
+  (add-hook 'python-mode-hook 'display-fill-column-indicator-mode)
+  (setq-default fill-column 80)
+#+END_SRC
+
+* Tramp
+I sometimes use tramp for remote development. I wish it worked better, I usually end up going back to an emacs session over ssh.
+
+Set up remote lsp client.
+#+BEGIN_SRC emacs-lisp
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
+                    :major-modes '(python-mode)
+                    :remote? t
+                    :server-id 'pyls-remote))
+  (setq lsp-restart 'ignore)
+#+END_SRC
+
+Trying to make Tramp faster by reducing the verbose output and never expiring the cache (need to make sure nothing besides Tramp modifies the files).
+
+#+BEGIN_SRC emacs-lisp
+  (setq remote-file-name-inhibit-cache nil)
+  (setq tramp-verbose 1)
+#+END_SRC
+
+Configure tramp to work with bash on remote and load my profile.
+#+BEGIN_SRC emacs-lisp
+  (setq explicit-shell-file-name "/bin/bash")
+#+END_SRC
+
+* Personal config
+There are some packages I don't want to load in my work laptop.
+
+~org-roam~ Zettlekasten system. Similar to [[roamresearch.com][Roam]], but open and in plain text!
+~deft~ To quickly search my zettlekasten notes.
+~helm-bibtex~ and ~org-ref~, to manage references in ~org-roam~.
+~mu4e~ Mail client in emacs.
+~pdf-tools~ Read and annotate PDFs from within emacs.
+
+#+BEGIN_SRC emacs-lisp
+  (setq personal-host "Daniels-MacBook-Pro.local")
   (when (string= (system-name) personal-host)
     ;; Helm bibtex 04/01
     (autoload 'helm-bibtex "helm-bibtex" "" t)
@@ -277,7 +374,7 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
             (latex-mode    . bibtex-completion-format-citation-cite)
             (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
             (default       . bibtex-completion-format-citation-default)))
-
+    (global-set-key (kbd "C-c b") 'helm-bibtex)
     ;;Org-roam 04/12/20
     (use-package org-roam
       :ensure t
@@ -395,53 +492,92 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
       (pdf-tools-install)
       (setq-default pdf-view-display-size 'fit-page)
       (setq pdf-annot-activate-created-annotations t)))
+#+END_SRC
 
+* Other
+Display number lines in all buffers
+#+BEGIN_SRC emacs-lisp
+  (global-display-line-numbers-mode)
+#+END_SRC
 
-
-  ;; Enable ligature for FiraCode
-  ;; https://github.com/tonsky/FiraCode
+Enable ligatures in [[https://github.com/tonsky/FiraCode][FiraCode]] font.
+#+BEGIN_SRC emacs-lisp
   (if (fboundp 'mac-auto-operator-composition-mode) (mac-auto-operator-composition-mode))
+#+END_SRC
 
+Gruvbox theme. Good contrast and colors.
 
-  ;; Enable helm mode 04/19/20
-  ;; Ido mode didn't allow me to add a space to a filename in org roam
-  ;; In any case helm seems more popular nowadays
+#+BEGIN_SRC emacs-lisp
+  ;; 05/28/20 gruvbox theme
+  (use-package gruvbox-theme
+    :config
+    (load-theme 'gruvbox-dark-medium t)
+    (let ((line (face-attribute 'mode-line :underline)))
+      (set-face-attribute 'mode-line          nil :overline   line)
+      (set-face-attribute 'mode-line-inactive nil :overline   line)
+      (set-face-attribute 'mode-line-inactive nil :underline  line)
+      (set-face-attribute 'mode-line          nil :box        nil)
+      (set-face-attribute 'mode-line-inactive nil :box        nil)))
+#+END_SRC
 
-  (use-package helm)
-  (helm-mode 1)
-  (define-key global-map [remap find-file] 'helm-find-files)
-  (define-key global-map [remap occur] 'helm-occur)
-  (define-key global-map [remap list-buffers] 'helm-buffers-list)
-  (define-key global-map [remap dabbrev-expand] 'helm-dabbrev)
-  (define-key global-map [remap execute-extended-command] 'helm-M-x)
-  (define-key global-map [remap apropos-command] 'helm-apropos)
-  (unless (boundp 'completion-in-region-function)
-    (define-key lisp-interaction-mode-map [remap completion-at-point] 'helm-lisp-completion-at-point)
-    (define-key emacs-lisp-mode-map       [remap completion-at-point] 'helm-lisp-completion-at-point))
-  (add-hook 'kill-emacs-hook #'(lambda () (and (file-exists-p "/tmp/helm-cfg.el") (delete-file "/tmp/helm-cfg.el"))))
-  (global-set-key (kbd "C-c b") 'helm-bibtex)
-  ;;
-  ;; Some original Emacs commands are replaced by their ‘helm’ counterparts:
+Set up emacsclient to use emacs when a command requires and editor.
 
+#+BEGIN_SRC emacs-lisp
+  (server-start)
+#+END_SRC
 
-  ;; - ‘find-file’(C-x C-f)            =>‘helm-find-files’
-  ;; - ‘occur’(M-s o)                  =>‘helm-occur’
-  ;; - ‘list-buffers’(C-x C-b)         =>‘helm-buffers-list’
-  ;; - ‘completion-at-point’(M-tab)    =>‘helm-lisp-completion-at-point’[1]
-  ;; - ‘apropos-command’(C-h a)        =>‘helm-apropos’
-  ;; - ‘dabbrev-expand’(M-/)           =>‘helm-dabbrev’
-  ;; - ‘execute-extended-command’(M-x) =>‘helm-M-x’
+Also need to set the following variables in ~.bashrc~:
 
-  ;; Toggle truncate lines in all buffers 04/25/20
-  ;;(setq-default truncate-lines t)
-  ;;(setq truncate-partial-width-windows nil) ;; for vertically-split windows
-  ;;(setq truncate-partial-width-windows nil)
-  (global-visual-line-mode t)
+#+BEGIN_SRC
+  export EDITOR=emacsclient
+  export VISUAL=emacsclient
+  # Open regular emacs when I don't have a server running
+  export ALTERNATE_EDITOR=/usr/local/bin/emacs
+#+END_SRC
 
-  ;; Toggle show paren mode. I don't know how I've lived without this all these years 05/03/20
+Show matching parents when mark is on one of them.
+#+BEGIN_SRC emacs-lisp
   (show-paren-mode 1)
+#+END_SRC
 
-  ;; Add hook to Pomidor to record completed pomodoros in org journal 05/07/20
+Set up Scheme for working on SICP.
+#+BEGIN_SRC emacs-lisp
+  (setq scheme-program-name "/usr/local/bin/scheme")
+#+END_SRC
+* Custom functions
+
+Kill all non-shell buffers. 
+#+BEGIN_SRC emacs-lisp
+  ;; Kill non matching buffers to clean up 03/28/19
+  (defun kill-non-matching-buffers ()
+    "Kill buffers that don't match \"shell\" or \"scratch\". Or any internal buffers for that matter."
+    (interactive)
+    ;; dont set a global variable
+    ;; tempoary bind it with let
+    (let ((list (buffer-list)))
+      (while list
+        ;; again bind buff locally
+        (let ((buff (buffer-name (car list))))
+          (setq list (cdr list))
+          (when (and (not (string-match "shell" buff))
+                     (not (string-match "scratch" buff))
+                     ;; you probably don't want kill internal buffers
+                     ;; which start with space or asterisk
+                     (not (string-match "\\` " buff))
+                     (not (string-match "\\`\\*" buff)))
+            (kill-buffer buff))))))
+  (global-set-key [f5] 'kill-non-matching-buffers)
+#+END_SRC
+
+Create a new shell.
+#+BEGIN_SRC emacs-lisp
+  (fset 'nshell
+        "\C-u\370shell")
+#+END_SRC
+
+
+Some hooks I wrote for the ~pomidor~ package.
+#+BEGIN_SRC emacs-lisp
   (use-package pomidor)
   (defun pomidor-insert-org-journal ()
     "Prompt the user to provide what was done during a pomodoro and add it to the journal file."
@@ -456,169 +592,6 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
     (let ((state (pomidor--current-state)))
       (if (pomidor--break state)
           (pomidor-insert-org-journal))))
-
   (advice-add 'pomidor-break :after #'pomidor-after-work-hook)
-
-  ;; Activate helm fuzzy matching 05/09/20
-  (setq helm-mode-fuzzy-match t)
-  (setq helm-completion-in-region-fuzzy-match t)
-  ;;(setq helm-completion-style 'helm-fuzzy)
-  (setq helm-completion-style 'emacs)
-  (setq completion-styles (if (version<= emacs-version "27.0") '(helm-flex) '(flex)))
-
-  ;; set up Scheme for SICP 05/09/20
-  (setq scheme-program-name "/usr/local/bin/scheme")
-
-
-  ;; 05/21/20
-  (global-set-key [f9] 'toggle-truncate-lines)
-
-  ;; 05/28/20 elmacro mode, convert macros to elisp
-  (use-package elmacro)
-  (elmacro-mode)
-
-  (use-package elfeed)
-  (use-package elfeed-org)
-  (elfeed-org)
-  (global-set-key (kbd "C-x w") 'elfeed)
-  (setq browse-url-browser-function 'eww-browse-url)
-
-  ;; 05/28/20 gruvbox theme
-  (use-package gruvbox-theme
-    :config
-    (load-theme 'gruvbox-dark-medium t)
-    (let ((line (face-attribute 'mode-line :underline)))
-      (set-face-attribute 'mode-line          nil :overline   line)
-      (set-face-attribute 'mode-line-inactive nil :overline   line)
-      (set-face-attribute 'mode-line-inactive nil :underline  line)
-      (set-face-attribute 'mode-line          nil :box        nil)
-      (set-face-attribute 'mode-line-inactive nil :box        nil)))
-
-
-  ;; (use-package modus-operandi-theme :ensure)
-  ;; (load-theme 'modus-operandi t)
-
-  ;; (use-package modus-vivendi-theme :ensure)
-  ;; (load-theme 'modus-vivendi t)
-
-  (use-package moody
-    :config
-    (setq x-underline-at-descent-line t)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode))
-
-
-
-  ;;(use-package company-capf)
-  (use-package company-lsp)
-  ;;(require 'company-lsp)
-  ;;(push 'company-capf company-backends)
-  (push 'company-lsp company-backends)
-
-  ;; Set up emacsclient for editing commands. See Bashrc too 08/07/20
-  (server-start)
-
-  ;; Add Flycheck to python mode and remove flymake
-  ;;(setq flycheck-python-pylint-executable "python3")
-  ;;(add-hook 'python-mode-hook 'flycheck-mode)
-  ;;(remove-hook 'elpy-modules 'elpy-module-flymake)
-
-  ;;(add-hook 'python-mode-hook 'my-python-mode-hook)
-
-  ;;(setq lsp-keymap-prefix "C-x l")
-
-  ;;(add-hook 'python-mode-hook 'whitespace-mode)
-
-
-  (use-package flycheck
-    :ensure t
-    :init (global-flycheck-mode))
-
-
-
-  (use-package lsp-mode
-    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-           (python-mode . lsp)
-           ;; if you want which-key integration
-           (lsp-mode . (lambda ()
-                         (let ((lsp-keymap-prefix "C-c l"))))))
-    ;;                        (lsp-enable-which-key-integration)))))
-    :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-    :commands lsp)
-  (add-hook 'python-mode-hook 'display-fill-column-indicator-mode)
-
-  (use-package lsp-ui
-    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-           (python-mode . lsp-ui-mode)))
-
-  ;; (use-package whitespace
-  ;;   :ensure t
-  ;;   :init
-  ;;   (add-hook 'python-mode-hook 'whitespace-mode))
-  ;; if you are helm user
-  (use-package helm-lsp :commands helm-lsp-workspace-symbol)
-
-  (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
-
-  ;; Disable menu bar 07/15/20
-  (menu-bar-mode -1)
-
-  ;; Add pass major mode 08/07/20
-  (use-package pass)
-
-
-
-  ;; Nice! Show helmp completion in a posframe. "Floating" Window. Very neat, and doesn't mess up with the buffer 23/08/2020
-  ;;(use-package helm-posframe)
-  ;;(helm-posframe-enable)
-  ;;Doesnt work very well, sometimes the floating windo get stuck
-
-  ;;(require 'org-attach-git)
-
-  (use-package org-download)
-
-  ;; Drag-and-drop to `dired`
-  (add-hook 'dired-mode-hook 'org-download-enable)
-  ;;(add-hook 'python-mode 'fci-mode)
-
-
-
-
-  ;; Capture most used commands
-  (use-package keyfreq
-    :init
-    (setq keyfreq-excluded-commands
-          '(self-insert-command
-            forward-char
-            backward-char
-            previous-line
-            next-line))
-    :config
-    (keyfreq-mode +1)
-    (keyfreq-autosave-mode +1))
-
-  ;; Trying avy goto 09/14/20
-  (global-set-key (kbd "C-:") 'avy-goto-char)
-
-  ;; Configure tramp to work with bash on remote and load my profile 09/14/20
-  ;;(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-  (setq explicit-shell-file-name "/bin/bash")
-  (setq remote-file-name-inhibit-cache nil)
-  ;; (setq vc-ignore-dir-regexp
-  ;;       (format "%s\\|%s"
-  ;;                     vc-ignore-dir-regexp
-  ;;                     tramp-file-name-regexp))
-  (setq tramp-verbose 1)
-
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
-                    :major-modes '(python-mode)
-                    :remote? t
-                    :server-id 'pyls-remote))
-  (setq lsp-restart 'ignore)
-
-  ;; doom modeline 09/14/20
-  (use-package doom-modeline
-    :ensure t
-    :init (doom-modeline-mode 1))
 #+END_SRC
+

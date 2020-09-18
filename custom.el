@@ -28,7 +28,7 @@
      ("Youtube" . "https://www.youtube.com/results?search_query=%s")))
  '(org-roam-directory "~/org-roam")
  '(package-selected-packages
-   '(pass doom-modeline all-the-icons keyfreq geiser modus-operandi-theme modus-vivendi-theme hyperbole pinboard org-download nov helm-postframe helm-posframe org-roam-bibtex define-word company-capf lsp-ui moody mu4e lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package yasnippet-snippets company markdown-mode csv-mode)))
+   '(doom-modeline all-the-icons keyfreq geiser modus-operandi-theme modus-vivendi-theme hyperbole pinboard org-download nov helm-postframe helm-posframe org-roam-bibtex define-word company-capf lsp-ui moody mu4e lsp-mode plantuml-mode helm-lsp company-lsp ox-gfm mw-thesaurus gruvbox-theme elfeed elfeed-org elmacro pydoc alert helm-config org-journal undo-tree org-ref deft smog ivy-bibtex helm-bibtex magit pomidor neotree sicp fill-column-indicator flycheck pylint elpy exec-path-from-shell ox-pandoc use-package yasnippet-snippets company markdown-mode csv-mode)))
  
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
