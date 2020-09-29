@@ -10,14 +10,13 @@ I'm working on moving it to a literate format. Over the years I have been buildi
 Initialize ~package.el~:
 #+BEGIN_SRC emacs-lisp
 (require 'package)
-(package-initialize)
 #+END_SRC
 
 Add Melpa and Elpa:
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+(package-initialize)
 #+END_SRC
 
 By default, Emacs automatically loads all installed packages in subsecuent sessions (this is not the same as loading the Lisp libraries). Disable automatic package loading, as we are explicitly loading them with ~(package-initialize)~.
@@ -153,9 +152,10 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
   ;; set up Scheme for literate programming org mode 09/11/20
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((scheme . t)))
+   '((scheme . t)
+     (python . t)))
   (setq org-confirm-babel-evaluate nil)
-
+  (setq org-babel-python-command "python3")
   ;; Enable markdown export org mode
   (eval-after-load "org"
     '(require 'ox-gfm nil t))
@@ -497,6 +497,12 @@ There are some packages I don't want to load in my work laptop.
 #+END_SRC
 
 * Other
+Wrap lines when they reach the end of the window:
+
+#+BEGIN_SRC emacs-lisp
+(global-visual-line-mode t)
+#+END_SRC
+
 Display number lines in all buffers
 #+BEGIN_SRC emacs-lisp
   (global-display-line-numbers-mode)
@@ -595,5 +601,25 @@ Some hooks I wrote for the ~pomidor~ package.
       (if (pomidor--break state)
           (pomidor-insert-org-journal))))
   (advice-add 'pomidor-break :after #'pomidor-after-work-hook)
+#+END_SRC
+
+* Testing
+Automatically create Table of contents of org document
+#+BEGIN_SRC emacs-lisp
+(use-package toc-org
+  :ensure t
+  :init
+  (setq toc-org-max-depth 3)
+  :config
+  (add-hook 'org-mode-hook 'toc-org-mode))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-download)
+#+END_SRC
+
+Don't break long lines in ~ansi-term~:
+#+BEGIN_SRC emacs-lisp
+(setq term-suppress-hard-newline t)
 #+END_SRC
 
