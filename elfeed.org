@@ -2,7 +2,6 @@
 ** Software                                                        :software:
 *** https://www.daemonology.net/hn-daily/index.rss
 *** http://www.daemonology.net/hn-weekly-ask/index.rss
-*** http://www.reddit.com/r/emacs/top.rss?sort=top&t=day
 ** Rationality                                                  :rationality:
 *** https://fs.blog/feed/
 *** https://www.lesswrong.com/feed.xml?view=curated-rss
