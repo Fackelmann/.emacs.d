@@ -88,7 +88,8 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
     (setq org-default-notes-file (concat org-directory "/inbox.org"))
     (setq org-agenda-file-regexp "\\`\\\([^.].*\\.org\\\|[0-9]\\\{8\\\}\\\(\\.gpg\\\)?\\\)\\'")
     (setq org-agenda-files (list "~/org"
-                                 "~/org/work"))
+                                 "~/org/work"
+                                 "~/org/saute"))
     (setq org-log-done t)
     (setq org-todo-keywords
           (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -328,6 +329,11 @@ Syntax checking in Python with flycheck.
   (setq-default fill-column 80)
 #+END_SRC
 
+Yasnippet, for template autocompletion
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :init (yas-global-mode 1))
+#+END_SRC
 * Tramp
 I sometimes use tramp for remote development. I wish it worked better, I usually end up going back to an emacs session over ssh.
 
