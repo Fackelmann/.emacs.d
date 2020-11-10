@@ -10,14 +10,13 @@ I'm working on moving it to a literate format. Over the years I have been buildi
 Initialize ~package.el~:
 #+BEGIN_SRC emacs-lisp
 (require 'package)
-(package-initialize)
 #+END_SRC
 
 Add Melpa and Elpa:
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+(package-initialize)
 #+END_SRC
 
 By default, Emacs automatically loads all installed packages in subsecuent sessions (this is not the same as loading the Lisp libraries). Disable automatic package loading, as we are explicitly loading them with ~(package-initialize)~.
@@ -109,7 +108,8 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
     (setq org-default-notes-file (concat org-directory "/inbox.org"))
     (setq org-agenda-file-regexp "\\`\\\([^.].*\\.org\\\|[0-9]\\\{8\\\}\\\(\\.gpg\\\)?\\\)\\'")
     (setq org-agenda-files (list "~/org"
-                                 "~/org/work"))
+                                 "~/org/work"
+                                 "~/org/saute"))
     (setq org-log-done t)
     (setq org-todo-keywords
           (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
@@ -173,9 +173,10 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
   ;; set up Scheme for literate programming org mode 09/11/20
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((scheme . t)))
+   '((scheme . t)
+     (python . t)))
   (setq org-confirm-babel-evaluate nil)
-
+  (setq org-babel-python-command "python3")
   ;; Enable markdown export org mode
   (eval-after-load "org"
     '(require 'ox-gfm nil t))
@@ -351,6 +352,11 @@ Syntax checking in Python with flycheck.
   (setq-default fill-column 80)
 #+END_SRC
 
+Yasnippet, for template autocompletion
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :init (yas-global-mode 1))
+#+END_SRC
 * Tramp
 I sometimes use tramp for remote development. I wish it worked better, I usually end up going back to an emacs session over ssh.
 
@@ -520,6 +526,12 @@ There are some packages I don't want to load in my work laptop.
 #+END_SRC
 
 * Other
+Wrap lines when they reach the end of the window:
+
+#+BEGIN_SRC emacs-lisp
+(global-visual-line-mode t)
+#+END_SRC
+
 Display number lines in all buffers
 #+BEGIN_SRC emacs-lisp
   (global-display-line-numbers-mode)
@@ -618,5 +630,49 @@ Some hooks I wrote for the ~pomidor~ package.
   ;;     (if (pomidor--break state)
   ;;         (pomidor-insert-org-journal))))
   ;; (advice-add 'pomidor-break :after #'pomidor-after-work-hook)
+#+END_SRC
+
+* Testing
+Automatically create Table of contents of org document
+#+BEGIN_SRC emacs-lisp
+(use-package toc-org
+  :ensure t
+  :init
+  (setq toc-org-max-depth 3)
+  :config
+  (add-hook 'org-mode-hook 'toc-org-mode))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-download)
+#+END_SRC
+
+Don't break long lines in ~ansi-term~:
+#+BEGIN_SRC emacs-lisp
+(setq term-suppress-hard-newline t)
+#+END_SRC
+
+
+Proselint:
+#+BEGIN_SRC emacs-lisp
+(flycheck-define-checker proselint
+  "A linter for prose."
+  :command ("proselint" source-inplace)
+  :error-patterns
+  ((warning line-start (file-name) ":" line ":" column ": "
+            (id (one-or-more (not (any " "))))
+            (message) line-end))
+  :modes (gfm-mode
+          markdown-mode
+          org-mode
+          text-mode))
+
+(add-to-list 'flycheck-checkers 'proselint)
+
+
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package eprime-mode)
 #+END_SRC
 
