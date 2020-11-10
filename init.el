@@ -14,3 +14,5 @@
                         ,load-file-name elapsed))) t)
 
 (provide 'init)
+(put 'erase-buffer 'disabled nil)
+(put 'dired-find-alternate-file 'disabled nil)
