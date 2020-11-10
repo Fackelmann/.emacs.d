@@ -73,6 +73,26 @@ And I like having the clock in the mode line, so I can easily tell the time when
 (display-time-mode 1)
 #+END_SRC
 
+Wrap around lines:
+#+BEGIN_SRC emacs-lisp
+(global-visual-line-mode t)
+#+END_SRC
+
+Show calendar week in calendar:
+#+BEGIN_SRC emacs-lisp
+(copy-face font-lock-constant-face 'calendar-iso-week-face)
+(set-face-attribute 'calendar-iso-week-face nil
+                    :height 0.7)
+  (setq calendar-week-start-day 1
+        calendar-intermonth-text
+        '(propertize
+          (format "%2d"
+                  (car
+                   (calendar-iso-from-absolute
+                    (calendar-absolute-from-gregorian (list month day year)))))
+          'font-lock-face 'font-lock-function-name-face))
+#+END_SRC
+
 * org-mode
 While I do agree with RMS on [[https://lists.gnu.org/archive/html/emacs-devel/2016-06/msg00272.html][his view that org-mode tries to pack too many features]], it doesn't detract for how good it is.
 I use it to write my ideas, to keep track of my projects at work (with tasks ans subtasks, and timestamps, and time tracking). I even use it to write this file!
@@ -255,6 +275,12 @@ Emacs native feed reader:
   (setq browse-url-browser-function 'eww-browse-url)
 #+END_SRC
 
+Helm support for lsp.
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+
+;;  
+#+END_SRC
 Language Server Protocol mode. Access docstrings, definitions, etc. 
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
@@ -265,16 +291,13 @@ Language Server Protocol mode. Access docstrings, definitions, etc.
                          (let ((lsp-keymap-prefix "C-c l"))))))
     ;;                        (lsp-enable-which-key-integration)))))
     :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+    :config (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
     :commands lsp)
 
 #+END_SRC
 
-Helm support for lsp.
-#+BEGIN_SRC emacs-lisp
-  (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 
-;;  (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
-#+END_SRC
+
 
 Shows lsp information in a hover posframe.
 #+BEGIN_SRC emacs-lisp
@@ -286,8 +309,8 @@ Shows lsp information in a hover posframe.
 
 And autocompletion with lsp
 #+BEGIN_SRC emacs-lisp
-  (use-package company-lsp)
-  (push 'company-lsp company-backends)
+;;  (use-package company-lsp)
+;;  (push 'company-lsp company-backends)
 #+END_SRC
 
 Record used keys, to improve workflow.
@@ -316,7 +339,7 @@ Jump to a specific character in the visible frames.
 
 #+BEGIN_SRC emacs-lisp
 (use-package avy
-  :bind ("C-:" . avy-goto-char))
+  :bind ("M-g f" . avy-goto-char))
 #+END_SRC
 
 Syntax checking in Python with flycheck.
@@ -333,12 +356,12 @@ I sometimes use tramp for remote development. I wish it worked better, I usually
 
 Set up remote lsp client.
 #+BEGIN_SRC emacs-lisp
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
-                    :major-modes '(python-mode)
-                    :remote? t
-                    :server-id 'pyls-remote))
-  (setq lsp-restart 'ignore)
+;;  (lsp-register-client
+;;   (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
+;;                    :major-modes '(python-mode)
+;;                    :remote? t
+;;                    :server-id 'pyls-remote))
+;;  (setq lsp-restart 'ignore)
 #+END_SRC
 
 Trying to make Tramp faster by reducing the verbose output and never expiring the cache (need to make sure nothing besides Tramp modifies the files).
@@ -589,11 +612,11 @@ Some hooks I wrote for the ~pomidor~ package.
     ;; And close org-journal window
     (delete-window))
 
-  (defun pomidor-after-work-hook ()
-    "Hook to execute after work.  Right when we enter the break state."
-    (let ((state (pomidor--current-state)))
-      (if (pomidor--break state)
-          (pomidor-insert-org-journal))))
-  (advice-add 'pomidor-break :after #'pomidor-after-work-hook)
+  ;; (defun pomidor-after-work-hook ()
+  ;;   "Hook to execute after work.  Right when we enter the break state."
+  ;;   (let ((state (pomidor--current-state)))
+  ;;     (if (pomidor--break state)
+  ;;         (pomidor-insert-org-journal))))
+  ;; (advice-add 'pomidor-break :after #'pomidor-after-work-hook)
 #+END_SRC
 
