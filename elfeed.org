@@ -2,6 +2,10 @@
 ** Software                                                        :software:
 *** https://www.daemonology.net/hn-daily/index.rss
 *** http://www.daemonology.net/hn-weekly-ask/index.rss
+*** http://www.greghendershott.com/feeds/all.rss.xml
+** Racket :software:
+*** https://racket-news.com/feeds/all.rss.xml
+*** https://defn.io/index.xml
 ** Rationality                                                  :rationality:
 *** https://fs.blog/feed/
 *** https://www.lesswrong.com/feed.xml?view=curated-rss
