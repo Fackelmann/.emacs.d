@@ -111,6 +111,7 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
                                  "~/org/work"
                                  "~/org/saute"))
     (setq org-log-done t)
+    (setq org-log-into-drawer t)
     (setq org-todo-keywords
           (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
                   (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
@@ -676,3 +677,20 @@ Proselint:
 (use-package eprime-mode)
 #+END_SRC
 
+
+#+BEGIN_SRC emacs-lisp
+  (use-package midnight
+    :config
+    (midnight-delay-set 'midnight-delay "10:00pm"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x t RET") 'tab-bar-switch-to-tab)
+#+END_SRC
+
+Is it "Easier To Change"? From the pragmatic programmer
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-save-hook
+          `(lambda ()
+             (message "ETC?")))
+#+END_SRC
