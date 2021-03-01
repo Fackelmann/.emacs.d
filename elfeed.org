@@ -13,6 +13,7 @@
 *** https://www.scottaaronson.com/blog/?feed=rss2
 *** https://rationalnewsletter.com/issues.atom
 http://cognitivemedium.com/feed.xml
+*** https://astralcodexten.substack.com/feed 
 ** Blogs                                                              :blogs:
 *** https://danielgplaza.com/index.xml
 *** http://feeds.feedburner.com/scotthyoung/HAHx?fmt=xml
