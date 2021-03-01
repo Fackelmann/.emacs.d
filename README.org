@@ -168,7 +168,12 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
     (setq org-indent-indentation-level 1)
     (setq org-adapt-indentation nil)
     ;; Show only current clock instance in mode line
-    (setq org-clock-mode-line-total 'current))
+    (setq org-clock-mode-line-total 'current)
+    :init
+    (add-hook 'org-agenda-mode-hook
+          (lambda ()
+            (visual-line-mode -1)
+            (toggle-truncate-lines 1))))
 
 
   ;; set up Scheme for literate programming org mode 09/11/20
@@ -185,6 +190,7 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
   (use-package org-download)
   ;; Drag-and-drop to `dired`
   (add-hook 'dired-mode-hook 'org-download-enable)
+
 #+END_SRC
 
 
@@ -393,7 +399,8 @@ There are some packages I don't want to load in my work laptop.
 ~pdf-tools~ Read and annotate PDFs from within emacs.
 
 #+BEGIN_SRC emacs-lisp
-  (setq personal-host "Daniels-MacBook-Pro.local")
+  ;;(setq personal-host "Daniels-MacBook-Pro.local")
+  (setq personal-host "Daniels-MBP.lan")
   (when (string= (system-name) personal-host)
     (message "Loading personal settings")
     ;; Helm bibtex 04/01
