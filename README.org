@@ -107,9 +107,13 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
     :config
     (setq org-default-notes-file (concat org-directory "/inbox.org"))
     (setq org-agenda-file-regexp "\\`\\\([^.].*\\.org\\\|[0-9]\\\{8\\\}\\\(\\.gpg\\\)?\\\)\\'")
-    (setq org-agenda-files (list "~/org"
-                                 "~/org/work"
-                                 "~/org/saute"))
+    (setq org-agenda-files (list "~/org/tasks.org"
+                                 "~/org/work/tasks.org"
+                                 "~/org/work/meetings.org"
+                                 "~/org/work/projects"
+                                 "~/org/personal/habits.org"
+                                 "~/org/personal/scheduled.org"
+                                 "~/org/personal/projects"))
     (setq org-log-done t)
     (setq org-log-into-drawer t)
     (setq org-todo-keywords
@@ -200,7 +204,7 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
       :defer t
       :bind ("C-c C-k" . org-journal-new-scheduled-entry)
       :config 
-      (add-to-list 'org-agenda-files org-journal-dir)
+;;      (add-to-list 'org-agenda-files org-journal-dir)
       (setq org-journal-file-header "#+BEGIN: clocktable :scope file :maxlevel 9 :block today :scope agenda :fileskip0 t
       ,#+END"))
 
@@ -363,6 +367,13 @@ Yasnippet, for template autocompletion
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
     :init (yas-global-mode 1))
+#+END_SRC
+
+Mode for managing multiple terminals in emacs. The dedicated terminal window is useful for debugging, as it is always visible
+#+BEGIN_SRC emacs-lisp
+  (use-package multi-term
+    :config
+    (setq multi-term-program "/bin/bash"))
 #+END_SRC
 * Tramp
 I sometimes use tramp for remote development. I wish it worked better, I usually end up going back to an emacs session over ssh.
@@ -591,6 +602,18 @@ Set up Scheme for working on SICP.
 #+BEGIN_SRC emacs-lisp
   (setq scheme-program-name "/usr/local/bin/scheme")
 #+END_SRC
+
+Is it "Easier To Change?", from the pragmatic programmer. Show the message every time we save a file.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-save-hook
+          `(lambda ()
+             (message "ETC?")))
+#+END_SRC
+
+Set keybinding for changing tabs
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x t RET") 'tab-bar-switch-to-tab)
+#+END_SRC
 * Custom functions
 
 Kill all non-shell buffers. 
@@ -694,12 +717,12 @@ Proselint:
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x t RET") 'tab-bar-switch-to-tab)
+(setq python-shell-interpreter "python3")
 #+END_SRC
 
-Is it "Easier To Change"? From the pragmatic programmer
 #+BEGIN_SRC emacs-lisp
-(add-hook 'after-save-hook
-          `(lambda ()
-             (message "ETC?")))
+;hydra
+(use-package hydra
+  :config
+  (use-package use-package-hydra))
 #+END_SRC
