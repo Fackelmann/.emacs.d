@@ -9,79 +9,79 @@ I'm working on moving it to a literate format. Over the years I have been buildi
 * Package Management
 Initialize ~package.el~:
 #+BEGIN_SRC emacs-lisp
-(require 'package)
+  (require 'package)
 #+END_SRC
 
 Add Melpa and Elpa:
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(package-initialize)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+  (package-initialize)
 #+END_SRC
 
 By default, Emacs automatically loads all installed packages in subsecuent sessions (this is not the same as loading the Lisp libraries). Disable automatic package loading, as we are explicitly loading them with ~(package-initialize)~.
 
 #+BEGIN_SRC emacs-lisp
-(setq package-enable-at-startup nil)
+  (setq package-enable-at-startup nil)
 #+END_SRC
 
 Install ~use-package.el~ if it's not installed already:
 #+BEGIN_SRC emacs-lisp
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
 
-(eval-when-compile
-  (require 'use-package))
+  (eval-when-compile
+    (require 'use-package))
 #+END_SRC
 
 And treat every package as though it had specified using ~:ensure t~. This will automatically install all packages in a new system.
 #+BEGIN_SRC emacs-lisp
-(require 'use-package-ensure)
-(setq use-package-always-ensure t)
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t)
 #+END_SRC
 
 * Customizing default emacs behavior
 
 I don't like the ~custom*~ variables being saved in my config file and cluttering it. I prefer to have them in their own location.
 #+BEGIN_SRC emacs-lisp
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file)
 #+END_SRC
 
 Likewise, I don't like having backup files (~) all over the place. But they are sometimes useful. This setting saves all of them under the same directory.
 #+BEGIN_SRC emacs-lisp
-(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 #+END_SRC
 
 Inhibit the startup screen. I'll take the ~scratch~ buffer, thank you very much.
 #+BEGIN_SRC emacs-lisp
-(setq inhibit-startup-screen t)
+  (setq inhibit-startup-screen t)
 #+END_SRC
 
 I barely use the mouse, so the tool bar and menu bar are just taking screen real state.
 
 #+BEGIN_SRC emacs-lisp
-(tool-bar-mode -1)
-(menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
 #+END_SRC
 
 And I like having the clock in the mode line, so I can easily tell the time when I'm in full screen.
 
 #+BEGIN_SRC emacs-lisp
-(display-time-mode 1)
+  (display-time-mode 1)
 #+END_SRC
 
 Wrap around lines:
 #+BEGIN_SRC emacs-lisp
-(global-visual-line-mode t)
+  (global-visual-line-mode t)
 #+END_SRC
 
 Show calendar week in calendar:
 #+BEGIN_SRC emacs-lisp
-(copy-face font-lock-constant-face 'calendar-iso-week-face)
-(set-face-attribute 'calendar-iso-week-face nil
-                    :height 0.7)
+  (copy-face font-lock-constant-face 'calendar-iso-week-face)
+  (set-face-attribute 'calendar-iso-week-face nil
+                      :height 0.7)
   (setq calendar-week-start-day 1
         calendar-intermonth-text
         '(propertize
@@ -175,9 +175,9 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
     (setq org-clock-mode-line-total 'current)
     :init
     (add-hook 'org-agenda-mode-hook
-          (lambda ()
-            (visual-line-mode -1)
-            (toggle-truncate-lines 1))))
+              (lambda ()
+                (visual-line-mode -1)
+                (toggle-truncate-lines 1))))
 
 
   ;; set up Scheme for literate programming org mode 09/11/20
@@ -199,16 +199,16 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
 
 
 ** org-journal
-#+BEGIN_SRC emacs-lisp
-    (use-package org-journal
-      :defer t
-      :bind ("C-c C-k" . org-journal-new-scheduled-entry)
-      :config 
-;;      (add-to-list 'org-agenda-files org-journal-dir)
-      (setq org-journal-file-header "#+BEGIN: clocktable :scope file :maxlevel 9 :block today :scope agenda :fileskip0 t
-      ,#+END"))
+# #+BEGIN_SRC emacs-lisp
+#     (use-package org-journal
+#       :defer t
+#       :bind ("C-c C-k" . org-journal-new-scheduled-entry)
+#       :config 
+# ;;      (add-to-list 'org-agenda-files org-journal-dir)
+#       (setq org-journal-file-header "#+BEGIN: clocktable :scope file :maxlevel 9 :block today :scope agenda :fileskip0 t
+#       ,#+END"))
 
-#+END_SRC
+# #+END_SRC
 
 * Packages
 
@@ -291,13 +291,14 @@ Helm support for lsp.
 #+BEGIN_SRC emacs-lisp
   (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 
-;;  
+  ;;  
 #+END_SRC
 Language Server Protocol mode. Access docstrings, definitions, etc. 
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
     :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
            (python-mode . lsp)
+           (web-mode . lsp)
            ;; if you want which-key integration
            (lsp-mode . (lambda ()
                          (let ((lsp-keymap-prefix "C-c l"))))))
@@ -315,14 +316,6 @@ Shows lsp information in a hover posframe.
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-ui
     :hook ((python-mode . lsp-ui-mode)))
-#+END_SRC
-
-
-
-And autocompletion with lsp
-#+BEGIN_SRC emacs-lisp
-;;  (use-package company-lsp)
-;;  (push 'company-lsp company-backends)
 #+END_SRC
 
 Record used keys, to improve workflow.
@@ -350,8 +343,8 @@ Eye candy for the mode line.
 Jump to a specific character in the visible frames.
 
 #+BEGIN_SRC emacs-lisp
-(use-package avy
-  :bind ("M-g f" . avy-goto-char))
+  (use-package avy
+    :bind ("M-g f" . avy-goto-char))
 #+END_SRC
 
 Syntax checking in Python with flycheck.
@@ -375,17 +368,23 @@ Mode for managing multiple terminals in emacs. The dedicated terminal window is 
     :config
     (setq multi-term-program "/bin/bash"))
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (define-key term-raw-map (kbd "C-c C-j") 'term-line-mode)
+  (define-key term-mode-map (kbd "C-c C-k") 'term-char-mode)
+#+END_SRC
+
 * Tramp
 I sometimes use tramp for remote development. I wish it worked better, I usually end up going back to an emacs session over ssh.
 
 Set up remote lsp client.
 #+BEGIN_SRC emacs-lisp
-;;  (lsp-register-client
-;;   (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
-;;                    :major-modes '(python-mode)
-;;                    :remote? t
-;;                    :server-id 'pyls-remote))
-;;  (setq lsp-restart 'ignore)
+  ;;  (lsp-register-client
+  ;;   (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
+  ;;                    :major-modes '(python-mode)
+  ;;                    :remote? t
+  ;;                    :server-id 'pyls-remote))
+  ;;  (setq lsp-restart 'ignore)
 #+END_SRC
 
 Trying to make Tramp faster by reducing the verbose output and never expiring the cache (need to make sure nothing besides Tramp modifies the files).
@@ -410,147 +409,185 @@ There are some packages I don't want to load in my work laptop.
 ~pdf-tools~ Read and annotate PDFs from within emacs.
 
 #+BEGIN_SRC emacs-lisp
-  (setq personal-host "Daniels-MacBook-Pro.local")
-  ;;(setq personal-host "Daniels-MBP.lan")
-  (when (string= (system-name) personal-host)
-    (message "Loading personal settings")
-    ;; Helm bibtex 04/01
-    (autoload 'helm-bibtex "helm-bibtex" "" t)
-    (setq bibtex-completion-bibliography
-          '("/Users/dgonzalez/org-roam/zotero-library.bib"))
-    (setq bibtex-completion-pdf-field "file")
+    ;;(setq personal-host "Daniels-MacBook-Pro.local")
+    (setq personal-host "Daniels-MBP.lan")
+    ;;(setq personal-host "Daniels-MBP")
+    (when (string= (system-name) personal-host)
+      (message "Loading personal settings")
+      ;; Helm bibtex 04/01
+      (autoload 'helm-bibtex "helm-bibtex" "" t)
+      (setq bibtex-completion-bibliography
+            '("/Users/dgonzalez/org-roam/zotero-library.bib"))
+      (setq bibtex-completion-pdf-field "file")
 
-    (setq bibtex-completion-format-citation-functions
-          '((org-mode      . bibtex-completion-format-citation-default)
-            (latex-mode    . bibtex-completion-format-citation-cite)
-            (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
-            (default       . bibtex-completion-format-citation-default)))
-    (global-set-key (kbd "C-c b") 'helm-bibtex)
-    ;;Org-roam 04/12/20
-    (use-package org-roam
-      :ensure t
-      :hook
-      (after-init . org-roam-mode)
-      :custom
-      (org-roam-directory "~/org-roam")
-      :bind (:map org-roam-mode-map
-                  (("C-c n l" . org-roam)
-                   ("C-c n f" . org-roam-find-file)
-                   ("C-c n g" . org-roam-graph-show))
-                  :map org-mode-map
-                  (("C-c n i" . org-roam-insert))
-                  (("C-c n I" . org-roam-insert-immediate))))
+      (setq bibtex-completion-format-citation-functions
+            '((org-mode      . bibtex-completion-format-citation-default)
+              (latex-mode    . bibtex-completion-format-citation-cite)
+              (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
+              (default       . bibtex-completion-format-citation-default)))
+      (global-set-key (kbd "C-c b") 'helm-bibtex)
+      ;;Org-roam 04/12/20
+      ;; Updated on 02/04/22 https://lucidmanager.org/productivity/taking-notes-with-emacs-org-mode-and-org-roam/
 
-    (require 'org-roam-protocol)
-    (setq org-roam-link-title-format "R:%s")
+      (use-package org-roam
+        :after org
+        :init (setq org-roam-v2-ack t) ;; Acknowledge V2 upgrade
+        :custom
+        (org-roam-directory "~/org-roam")
+        :config
+        (org-roam-db-autosync-enable)
+        (require 'org-roam-dailies)
+        :bind (("C-c n f" . org-roam-node-find)
+               ("C-c n r" . org-roam-node-random)		    
+               :map org-mode-map
+               (("C-c n i" . org-roam-node-insert)
+                ("C-c n o" . org-id-get-create)
+                ("C-c n t" . org-roam-tag-add)
+                ("C-c n a" . org-roam-alias-add)
+                ("C-c n l" . org-roam-buffer-toggle))
+               :map org-roam-dailies-map
+               ("Y" . org-roam-dailies-capture-yesterday)
+               ("T" . org-roam-dailies-capture-tomorrow))
+        :bind-keymap
+        ("C-c n y" . org-roam-dailies-map))
 
-    ;; I like my filenames to be only given by timestamp, so removing title (which can change.
-    (setq org-roam-capture-templates
-          '(("d" "default" plain (function org-roam-capture--get-point)
-             "%?"
-             :file-name "%<%Y%m%d%H%M%S>"
-             :head "#+TITLE: ${title}\n"
-             :unnarrowed t)))
-    (setq org-roam-graph-executable "/usr/local/bin/dot")
-    (setq org-roam-graph-viewer "/Applications/Firefox Nightly.app/Contents/MacOS/firefox")
-
-    (use-package deft
-      :after org
-      :bind
-      ("C-c n d" . deft)
-      :custom
-      ;; We don't want recursion. The reason is that we have the /ref subdirectory for literature notes, and I don't want to clutter my deft results
-      (deft-recursive nil)
-      (deft-use-filter-string-for-filename t)
-      (deft-default-extension "org")
-      (deft-directory "~/org-roam"))
-
-
-
-
-    (use-package org-ref)
-    ;; see org-ref for use of these variables
-    (setq reftex-default-bibliography '("/Users/dgonzalez/org-roam/zotero-library.bib"))
-    (setq org-ref-default-bibliography '("/Users/dgonzalez/org-roam/zotero-library.bib"))
-    (setq org-ref-bibliography-notes '("/Users/dgonzalez/org-roam/bibnotes.org"))
-
-    ;; Literature notes in org-roam 08/22/20
-    (use-package org-roam-bibtex
-      :after org-roam
-      :hook (org-roam-mode . org-roam-bibtex-mode)
-      :bind (:map org-mode-map
-                  (("C-c n a" . orb-note-actions))))
-
-    (setq orb-templates
-          '(("r" "ref" plain (function org-roam-capture--get-point) ""
-             :file-name "refs/${citekey}"
-             :head "#+TITLE: ${citekey}: ${title}\n#+ROAM_KEY: ${ref}\n" ; <--
-             :unnarrowed t)))
-
-    ;; Add mu4e mail client
-    (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
-    (require 'mu4e)
-    (add-to-list 'mu4e-view-actions
-    '("ViewInBrowser" . mu4e-action-view-in-browser) t)
-    (setq
-     mue4e-headers-skip-duplicates  t
-     mu4e-view-show-images t
-     mu4e-view-show-addresses t
-     mu4e-compose-format-flowed nil
-     mu4e-date-format "%y/%m/%d"
-     mu4e-headers-date-format "%Y/%m/%d"
-     mu4e-change-filenames-when-moving t
-     mu4e-attachments-dir "~/Downloads"
-     user-mail-address "dan@danielgplaza.com"
-
-     mu4e-maildir       "~/Maildir/fastmail"   ;; top-level Maildir
-     ;; note that these folders below must start with /
-     ;; the paths are relative to maildir root
-     mu4e-refile-folder "/Archive"
-     mu4e-sent-folder   "/Sent"
-     mu4e-drafts-folder "/Drafts"
-     mu4e-trash-folder  "/Trash")
-
-    ;; this setting allows to re-sync and re-index mail
-    ;; by pressing U
-    (setq mu4e-get-mail-command  "mbsync -a")
+      (require 'org-roam-protocol)
+      (setq org-roam-link-title-format "R:%s")
+  ;;    (org-roam-db-autosync-mode)
+      ;; I like my filenames to be only given by timestamp, so removing title (which can change.
+      (setq org-roam-capture-templates '(("d" "default" plain "%?"
+                                          :target (file+head "%<%Y%m%d%H%M%S>.org"
+                                                             "#+title: ${title}\n#+date: %u\n")
+                                          :unnarrowed t)
+                                         ("o" "other" plain "%?"
+                                          :target (file+head "%<%Y%m%d%H%M%S>.org"
+                                                             "#+title: ${title}\n#+date: %u\n")
+                                          :unnarrowed t)))
+      (setq org-roam-dailies-capture-templates '(("d" "default" entry"* %?"
+                                                  :target (file+head "%<%Y-%m-%d>.org"
+                                                                     "#+title: %<%Y-%m-%d>\n")
+                                                  :unnarrowed t)))
+      ;;    (setq org-roam-dailies-capture-templates '(("d" "default" entry "* %?"
+      ;;                                        :target (file+head "%<%Y%m%d%H%M%S>.org"
+      ;;                                                           "#+title: ${title}\n#+date: %u\n")
+      ;;                                        :unnarrowed t)))
+      (setq org-roam-capture-ref-templates '(("i" "internet" plain "%?"
+                                              :target (file+head "%<%Y%m%d%H%M%S>.org"
+                                                                 "#+title: ${title}\n#+date: %u\n${body}")
+                                              :unnarrowed t)))
+      ;;    (setq org-roam-capture-templates
+      ;;          '(("d" "default" plain (function org-roam-capture--get-point)
+      ;;             "%?"
+      ;;             :file-name "%<%Y%m%d%H%M%S>"
+      ;;             :head "#+TITLE: ${title}\n"
+      ;;             :unnarrowed t)))
+      ;;          time-stamp-start "#\\+lastmod: [\t]*")
+      (setq org-roam-graph-executable "/usr/local/bin/dot")
+      (setq org-roam-graph-viewer "/Applications/Firefox Nightly.app/Contents/MacOS/firefox")
 
 
-    (setq
-     message-send-mail-function   'smtpmail-send-it
-     smtpmail-default-smtp-server "smtp.fastmail.com"
-     smtpmail-smtp-server         "smtp.fastmail.com"
-     smtpmail-stream-type 'starttls
-     smtpmail-smtp-service 587
-     smtp-local-domain "fastmail.com")
+      (use-package deft
+        :after org
+        :bind
+        ("C-c n d" . deft)
+        :custom
+        ;; We don't want recursion. The reason is that we have the /ref  subdirectory for literature notes, and I don't want to clutter my deft results
+        (deft-recursive nil)
+        (deft-strip-summary-regexp ":PROPERTIES:\n\\(.+\n\\)+:END:\n")
+        (deft-use-filter-string-for-filename t)
+        (deft-default-extension "org")
+        (deft-directory "~/org-roam"))
 
-    (global-set-key (kbd "C-x m") 'mu4e)
 
-    (fset 'my-move-to-trash "mTrash")
-    (define-key mu4e-headers-mode-map (kbd "d") 'my-move-to-trash)
-    (define-key mu4e-view-mode-map (kbd "d") 'my-move-to-trash)
 
-    (setenv "PKG_CONFIG_PATH"
-            (f-join
-             (file-name-as-directory
-              (nth 0
-                   (split-string
-                    (shell-command-to-string "brew --prefix"))))
-             "Cellar" "libffi" "3.2.1" "lib" "pkgconfig"))
-    (use-package pdf-tools
-      :ensure t
-      :mode ("\\.pdf\\'" . pdf-view-mode)
-      :config
-      (pdf-tools-install)
-      (setq-default pdf-view-display-size 'fit-page)
-      (setq pdf-annot-activate-created-annotations t)))
+
+      (use-package org-ref)
+      ;; see org-ref for use of these variables
+      (setq reftex-default-bibliography '("/Users/dgonzalez/org-roam/zotero-library.bib"))
+      (setq org-ref-default-bibliography '("/Users/dgonzalez/org-roam/zotero-library.bib"))
+      (setq org-ref-bibliography-notes '("/Users/dgonzalez/org-roam/bibnotes.org"))
+
+      ;; Literature notes in org-roam 08/22/20
+      (use-package org-roam-bibtex
+        :after org-roam
+        :hook (org-roam-mode . org-roam-bibtex-mode)
+        :bind (:map org-mode-map
+                    (("C-c n a" . orb-note-actions))))
+
+      (setq 
+       orb-templates
+       '(("r" "ref" plain (function org-roam-capture--get-point) ""
+          :file-name "refs/${citekey}"
+          :head "#+TITLE: ${citekey}: ${title}\n#+ROAM_KEY: ${ref}\n" ; <--
+          :unnarrowed t)))
+
+      ;; Add mu4e mail client
+      (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
+      (require 'mu4e)
+      (add-to-list 'mu4e-view-actions
+                   '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+      (setq
+       mue4e-headers-skip-duplicates  t
+       mu4e-view-show-images t
+       mu4e-view-show-addresses t
+       mu4e-compose-format-flowed nil
+       mu4e-date-format "%y/%m/%d"
+       mu4e-headers-date-format "%Y/%m/%d"
+       mu4e-change-filenames-when-moving t
+       mu4e-attachments-dir "~/Downloads"
+       user-mail-address "dan@danielgplaza.com"
+
+       mu4e-maildir       "~/Maildir/fastmail"   ;; top-level Maildir
+       ;; note that these folders below must start with /
+       ;; the paths are relative to maildir root
+       mu4e-refile-folder "/Archive"
+       mu4e-sent-folder   "/Sent"
+       mu4e-drafts-folder "/Drafts"
+       mu4e-trash-folder  "/Trash")
+
+      ;; this setting allows to re-sync and re-index mail
+      ;; by pressing U
+      (setq mu4e-get-mail-command  "mbsync -a")
+
+
+      (setq
+       message-send-mail-function   'smtpmail-send-it
+       smtpmail-default-smtp-server "smtp.fastmail.com"
+       smtpmail-smtp-server         "smtp.fastmail.com"
+       smtpmail-stream-type 'starttls
+       smtpmail-smtp-service 587
+       smtp-local-domain "fastmail.com")
+
+      (global-set-key (kbd "C-x m") 'mu4e)
+
+      (fset 'my-move-to-trash "mTrash")
+      (define-key mu4e-headers-mode-map (kbd "d") 'my-move-to-trash)
+      (define-key mu4e-view-mode-map (kbd "d") 'my-move-to-trash)
+
+      (setenv "PKG_CONFIG_PATH"
+              (f-join
+               (file-name-as-directory
+                (nth 0
+                     (split-string
+                      (shell-command-to-string "brew --prefix"))))
+               "Cellar" "libffi" "3.2.1" "lib" "pkgconfig"))
+      (use-package pdf-tools
+        :ensure t
+        :mode ("\\.pdf\\'" . pdf-view-mode)
+        :config
+        (pdf-tools-install)
+        (setq-default pdf-view-display-size 'fit-page)
+        (setq pdf-annot-activate-created-annotations t)))
 #+END_SRC
+
+#+RESULTS:
+: ((\.js$ . web-mode) (\.pdf\' . pdf-view-mode) (\.odc\' . archive-mode) (\.odf\' . archive-mode) (\.odi\' . archive-mode) (\.otp\' . archive-mode) (\.odp\' . archive-mode) (\.otg\' . archive-mode) (\.odg\' . archive-mode) (\.ots\' . archive-mode) (\.ods\' . archive-mode) (\.odm\' . archive-mode) (\.ott\' . archive-mode) (\.odt\' . archive-mode) (\.gpg\(~\|\.~[0-9]+~\)?\' nil epa-file) (/git-rebase-todo\' . git-rebase-mode) (\.\(?:md\|markdown\|mkd\|mdown\|mkdn\|mdwn\)\' . markdown-mode) (\.rktl\' . racket-mode) (\.rktd\' . racket-mode) (\.rkt\' . racket-mode) (\.\(?:3fr\|arw\|bmp\|cr[2w]\|d\(?:cr\|ds\|ng\)\|exr\|gif\|ico\|jp\(?:2\|eg\)\|mrw\|nef\|orf\|p\(?:bm\|ef\|ng\|sd\)\|raf\|s\(?:gi\|r[2f]\|vg\)\|t\(?:ga\|iff\)\)\' . image-mode) (\.elc\' . elisp-byte-code-mode) (\.zst\' nil jka-compr) (\.dz\' nil jka-compr) (\.xz\' nil jka-compr) (\.lzma\' nil jka-compr) (\.lz\' nil jka-compr) (\.g?z\' nil jka-compr) (\.bz2\' nil jka-compr) (\.Z\' nil jka-compr) (\.vr[hi]?\' . vera-mode) (\(?:\.\(?:rbw?\|ru\|rake\|thor\|jbuilder\|rabl\|gemspec\|podspec\)\|/\(?:Gem\|Rake\|Cap\|Thor\|Puppet\|Berks\|Vagrant\|Guard\|Pod\)file\)\' . ruby-mode) (\.re?st\' . rst-mode) (\.py[iw]?\' . python-mode) (\.m\' . octave-maybe-mode) (\.less\' . less-css-mode) (\.scss\' . scss-mode) (\.awk\' . awk-mode) (\.\(u?lpc\|pike\|pmod\(\.in\)?\)\' . pike-mode) (\.idl\' . idl-mode) (\.java\' . java-mode) (\.m\' . objc-mode) (\.ii\' . c++-mode) (\.i\' . c-mode) (\.lex\' . c-mode) (\.y\(acc\)?\' . c-mode) (\.h\' . c-or-c++-mode) (\.c\' . c-mode) (\.\(CC?\|HH?\)\' . c++-mode) (\.[ch]\(pp\|xx\|\+\+\)\' . c++-mode) (\.\(cc\|hh\)\' . c++-mode) (\.\(bat\|cmd\)\' . bat-mode) (\.[sx]?html?\(\.[a-zA-Z_]+\)?\' . mhtml-mode) (\.svgz?\' . image-mode) (\.svgz?\' . xml-mode) (\.x[bp]m\' . image-mode) (\.x[bp]m\' . c-mode) (\.p[bpgn]m\' . image-mode) (\.tiff?\' . image-mode) (\.gif\' . image-mode) (\.png\' . image-mode) (\.jpe?g\' . image-mode) (\.te?xt\' . text-mode) (\.[tT]e[xX]\' . tex-mode) (\.ins\' . tex-mode) (\.ltx\' . latex-mode) (\.dtx\' . doctex-mode) (\.org\' . org-mode) (\.el\' . emacs-lisp-mode) (Project\.ede\' . emacs-lisp-mode) (\.\(scm\|stk\|ss\|sch\)\' . scheme-mode) (\.l\' . lisp-mode) (\.li?sp\' . lisp-mode) (\.[fF]\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.\(dpr\|DPR\)\' . delphi-mode) (\.ad[abs]\' . ada-mode) (\.ad[bs]\.dg\' . ada-mode) (\.\([pP]\([Llm]\|erl\|od\)\|al\)\' . perl-mode) (Imakefile\' . makefile-imake-mode) (Makeppfile\(?:\.mk\)?\' . makefile-makepp-mode) (\.makepp\' . makefile-makepp-mode) (\.mk\' . makefile-bsdmake-mode) (\.make\' . makefile-bsdmake-mode) (GNUmakefile\' . makefile-gmake-mode) ([Mm]akefile\' . makefile-bsdmake-mode) (\.am\' . makefile-automake-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.[sS]\' . asm-mode) (\.asm\' . asm-mode) (\.css\' . css-mode) (\.mixal\' . mixal-mode) (\.gcov\' . compilation-mode) (/\.[a-z0-9-]*gdbinit . gdb-script-mode) (-gdb\.gdb . gdb-script-mode) ([cC]hange\.?[lL]og?\' . change-log-mode) ([cC]hange[lL]og[-.][0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ckz]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\.bash\' . sh-mode) (\(/\|\`\)\.\(bash_\(profile\|history\|log\(in\|out\)\)\|z?log\(in\|out\)\)\' . sh-mode) (\(/\|\`\)\.\(shrc\|zshrc\|m?kshrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.m[mes]\' . nroff-mode) (\.man\' . nroff-mode) (\.sty\' . latex-mode) (\.cl[so]\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.bst\' . bibtex-style-mode) (\.sql\' . sql-mode) (\(acinclude\|aclocal\|acsite\)\.m4\' . autoconf-mode) (\.m[4c]\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.i?tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f9[05]\' . f90-mode) (\.f0[38]\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.\(pro\|PRO\)\' . idlwave-mode) (\.srt\' . srecode-template-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|lha\|zoo\|[jew]ar\|xpi\|rar\|cbr\|7z\|ARC\|ZIP\|LZH\|LHA\|ZOO\|[JEW]AR\|XPI\|RAR\|CBR\|7Z\)\' . archive-mode) (\.oxt\' . archive-mode) (\.\(deb\|[oi]pk\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.x[ms]l\' . xml-mode) (\.dbk\' . xml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.js[mx]?\' . javascript-mode) (\.har\' . javascript-mode) (\.json\' . javascript-mode) (\.[ds]?va?h?\' . verilog-mode) (\.by\' . bovine-grammar-mode) (\.wy\' . wisent-grammar-mode) ([:/\]\..*\(emacs\|gnus\|viper\)\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.ld[si]?\' . ld-script-mode) (ld\.?script\' . ld-script-mode) (\.xs\' . c-mode) (\.x[abdsru]?[cnw]?\' . ld-script-mode) (\.zone\' . dns-mode) (\.soa\' . dns-mode) (\.asd\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (\.\(?:PDF\|DVI\|OD[FGPST]\|DOCX\|XLSX?\|PPTX?\|pdf\|djvu\|dvi\|od[fgpst]\|docx\|xlsx?\|pptx?\)\' . doc-view-mode-maybe) (configure\.\(ac\|in\)\' . autoconf-mode) (\.s\(v\|iv\|ieve\)\' . sieve-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.g\' . antlr-mode) (\.mod\' . m2-mode) (\.ses\' . ses-mode) (\.docbook\' . sgml-mode) (\.com\' . dcl-mode) (/config\.\(?:bat\|log\)\' . fundamental-mode) (/\.\(authinfo\|netrc\)\' . authinfo-mode) (\.\(?:[iI][nN][iI]\|[lL][sS][tT]\|[rR][eE][gG]\|[sS][yY][sS]\)\' . conf-mode) (\.la\' . conf-unix-mode) (\.ppd\' . conf-ppd-mode) (java.+\.conf\' . conf-javaprop-mode) (\.properties\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-javaprop-mode) (\.toml\' . conf-toml-mode) (\.desktop\' . conf-desktop-mode) (/\.redshift\.conf\' . conf-windows-mode) (\`/etc/\(?:DIR_COLORS\|ethers\|.?fstab\|.*hosts\|lesskey\|login\.?de\(?:fs\|vperm\)\|magic\|mtab\|pam\.d/.*\|permissions\(?:\.d/.+\)?\|protocols\|rpc\|services\)\' . conf-space-mode) (\`/etc/\(?:acpid?/.+\|aliases\(?:\.d/.+\)?\|default/.+\|group-?\|hosts\..+\|inittab\|ksysguarddrc\|opera6rc\|passwd-?\|shadow-?\|sysconfig/.+\)\' . conf-mode) ([cC]hange[lL]og[-.][-0-9a-z]+\' . change-log-mode) (/\.?\(?:gitconfig\|gnokiirc\|hgrc\|kde.*rc\|mime\.types\|wgetrc\)\' . conf-mode) (/\.\(?:asound\|enigma\|fetchmail\|gltron\|gtk\|hxplayer\|mairix\|mbsync\|msmtp\|net\|neverball\|nvidia-settings-\|offlineimap\|qt/.+\|realplayer\|reportbug\|rtorrent\.\|screen\|scummvm\|sversion\|sylpheed/.+\|xmp\)rc\' . conf-mode) (/\.\(?:gdbtkinit\|grip\|mpdconf\|notmuch-config\|orbital/.+txt\|rhosts\|tuxracer/options\)\' . conf-mode) (/\.?X\(?:default\|resource\|re\)s\> . conf-xdefaults-mode) (/X11.+app-defaults/\|\.ad\' . conf-xdefaults-mode) (/X11.+locale/.+/Compose\' . conf-colon-mode) (/X11.+locale/compose\.dir\' . conf-javaprop-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' nil t) (\.\(?:orig\|in\|[bB][aA][kK]\)\' nil t) ([/.]c\(?:on\)?f\(?:i?g\)?\(?:\.[a-zA-Z0-9._-]+\)?\' . conf-mode-maybe) (\.[1-9]\' . nroff-mode) (\.art\' . image-mode) (\.avs\' . image-mode) (\.bmp\' . image-mode) (\.cmyk\' . image-mode) (\.cmyka\' . image-mode) (\.crw\' . image-mode) (\.dcr\' . image-mode) (\.dcx\' . image-mode) (\.dng\' . image-mode) (\.dpx\' . image-mode) (\.fax\' . image-mode) (\.hrz\' . image-mode) (\.icb\' . image-mode) (\.icc\' . image-mode) (\.icm\' . image-mode) (\.ico\' . image-mode) (\.icon\' . image-mode) (\.jbg\' . image-mode) (\.jbig\' . image-mode) (\.jng\' . image-mode) (\.jnx\' . image-mode) (\.miff\' . image-mode) (\.mng\' . image-mode) (\.mvg\' . image-mode) (\.otb\' . image-mode) (\.p7\' . image-mode) (\.pcx\' . image-mode) (\.pdb\' . image-mode) (\.pfa\' . image-mode) (\.pfb\' . image-mode) (\.picon\' . image-mode) (\.pict\' . image-mode) (\.rgb\' . image-mode) (\.rgba\' . image-mode) (\.tga\' . image-mode) (\.wbmp\' . image-mode) (\.webp\' . image-mode) (\.wmf\' . image-mode) (\.wpg\' . image-mode) (\.xcf\' . image-mode) (\.xmp\' . image-mode) (\.xwd\' . image-mode) (\.yuv\' . image-mode) (\.tgz\' . tar-mode) (\.tbz2?\' . tar-mode) (\.txz\' . tar-mode) (\.tzst\' . tar-mode))
 
 * Other
 Wrap lines when they reach the end of the window:
 
 #+BEGIN_SRC emacs-lisp
-(global-visual-line-mode t)
+  (global-visual-line-mode t)
 #+END_SRC
 
 Display number lines in all buffers
@@ -567,16 +604,25 @@ Gruvbox theme. Good contrast and colors.
 
 #+BEGIN_SRC emacs-lisp
   ;; 05/28/20 gruvbox theme
-  (use-package gruvbox-theme
-    :config
-    (load-theme 'gruvbox-dark-medium t)
-    (let ((line (face-attribute 'mode-line :underline)))
-      (set-face-attribute 'mode-line          nil :overline   line)
-      (set-face-attribute 'mode-line-inactive nil :overline   line)
-      (set-face-attribute 'mode-line-inactive nil :underline  line)
-      (set-face-attribute 'mode-line          nil :box        nil)
-      (set-face-attribute 'mode-line-inactive nil :box        nil)))
+  ;; (use-package gruvbox-theme
+  ;;   :config
+  ;;   (load-theme 'gruvbox-dark-medium t)
+  ;;   (let ((line (face-attribute 'mode-line :underline)))
+  ;;     (set-face-attribute 'mode-line          nil :overline   line)
+  ;;     (set-face-attribute 'mode-line-inactive nil :overline   line)
+  ;;     (set-face-attribute 'mode-line-inactive nil :underline  line)
+  ;;     (set-face-attribute 'mode-line          nil :box        nil)
+  ;;     (set-face-attribute 'mode-line-inactive nil :box        nil)))
 #+END_SRC
+
+Trying Spacegray theme.
+#+BEGIN_SRC emacs-lisp
+(use-package spacegray-theme :defer t)
+(use-package doom-themes :defer t)
+  (load-theme 'doom-palenight t)
+  (doom-themes-visual-bell-config)
+#+END_SRC
+
 
 Set up emacsclient to use emacs when a command requires and editor.
 
@@ -605,14 +651,14 @@ Set up Scheme for working on SICP.
 
 Is it "Easier To Change?", from the pragmatic programmer. Show the message every time we save a file.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'after-save-hook
-          `(lambda ()
-             (message "ETC?")))
+  (add-hook 'after-save-hook
+            `(lambda ()
+               (message "ETC?")))
 #+END_SRC
 
 Set keybinding for changing tabs
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x t RET") 'tab-bar-switch-to-tab)
+  (global-set-key (kbd "C-x t RET") 'tab-bar-switch-to-tab)
 #+END_SRC
 * Custom functions
 
@@ -665,48 +711,49 @@ Some hooks I wrote for the ~pomidor~ package.
   ;; (advice-add 'pomidor-break :after #'pomidor-after-work-hook)
 #+END_SRC
 
+
 * Testing
 Automatically create Table of contents of org document
 #+BEGIN_SRC emacs-lisp
-(use-package toc-org
-  :ensure t
-  :init
-  (setq toc-org-max-depth 3)
-  :config
-  (add-hook 'org-mode-hook 'toc-org-mode))
+  (use-package toc-org
+    :ensure t
+    :init
+    (setq toc-org-max-depth 3)
+    :config
+    (add-hook 'org-mode-hook 'toc-org-mode))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-download)
+  (use-package org-download)
 #+END_SRC
 
 Don't break long lines in ~ansi-term~:
 #+BEGIN_SRC emacs-lisp
-(setq term-suppress-hard-newline t)
+  (setq term-suppress-hard-newline t)
 #+END_SRC
 
 
 Proselint:
 #+BEGIN_SRC emacs-lisp
-(flycheck-define-checker proselint
-  "A linter for prose."
-  :command ("proselint" source-inplace)
-  :error-patterns
-  ((warning line-start (file-name) ":" line ":" column ": "
-            (id (one-or-more (not (any " "))))
-            (message) line-end))
-  :modes (gfm-mode
-          markdown-mode
-          org-mode
-          text-mode))
+  (flycheck-define-checker proselint
+    "A linter for prose."
+    :command ("proselint" source-inplace)
+    :error-patterns
+    ((warning line-start (file-name) ":" line ":" column ": "
+              (id (one-or-more (not (any " "))))
+              (message) line-end))
+    :modes (gfm-mode
+            markdown-mode
+            org-mode
+            text-mode))
 
-(add-to-list 'flycheck-checkers 'proselint)
+  (add-to-list 'flycheck-checkers 'proselint)
 
 
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package eprime-mode)
+  (use-package eprime-mode)
 #+END_SRC
 
 
@@ -717,78 +764,149 @@ Proselint:
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(setq python-shell-interpreter "python3")
+  (setq python-shell-interpreter "python3")
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-;hydra
-(use-package hydra
-  :config
-  (use-package use-package-hydra))
+                                          ;hydra
+  (use-package hydra
+    :config
+    (use-package use-package-hydra))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package anki-editor
-  :after org
-  :bind (:map org-mode-map
-              ("<f12>" . anki-editor-cloze-region-auto-incr)
-              ("<f11>" . anki-editor-cloze-region-dont-incr)
-              ("<f10>" . anki-editor-reset-cloze-number)
-              ("<f9>"  . anki-editor-push-tree))
-  :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
-  :config
-  (setq anki-editor-create-decks t ;; Allow anki-editor to create a new deck if it doesn't exist
-        anki-editor-org-tags-as-anki-tags t)
+  (use-package anki-editor
+    :after org
+    :bind (:map org-mode-map
+                ("<f12>" . anki-editor-cloze-region-auto-incr)
+                ("<f11>" . anki-editor-cloze-region-dont-incr)
+                ("<f10>" . anki-editor-reset-cloze-number)
+                ("<f9>"  . anki-editor-push-tree))
+    :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
+    :config
+    (setq anki-editor-create-decks t ;; Allow anki-editor to create a new deck if it doesn't exist
+          anki-editor-org-tags-as-anki-tags t)
 
-  (defun anki-editor-cloze-region-auto-incr (&optional arg)
-    "Cloze region without hint and increase card number."
-    (interactive)
-    (anki-editor-cloze-region my-anki-editor-cloze-number "")
-    (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
-    (forward-sexp))
-  (defun anki-editor-cloze-region-dont-incr (&optional arg)
-    "Cloze region without hint using the previous card number."
-    (interactive)
-    (anki-editor-cloze-region (1- my-anki-editor-cloze-number) "")
-    (forward-sexp))
-  (defun anki-editor-reset-cloze-number (&optional arg)
-    "Reset cloze number to ARG or 1"
-    (interactive)
-    (setq my-anki-editor-cloze-number (or arg 1)))
-  (defun anki-editor-push-tree ()
-    "Push all notes under a tree."
-    (interactive)
-    (anki-editor-push-notes '(4))
-    (anki-editor-reset-cloze-number))
-  ;; Initialize
-  (anki-editor-reset-cloze-number)
-  )
-;; Org-capture templates
-(setq org-my-anki-file "/Users/dgonzalez/org/anki.org")
-(add-to-list 'org-capture-templates
-             '("a" "Anki basic"
-               entry
-               (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: New\n:END:\n** Front\n%?\n** Back\n%x\n"))
-(add-to-list 'org-capture-templates
-             '("A" "Anki cloze"
-               entry
-               (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: New\n:END:\n** Text\n%x\n** Extra\n"))
+    (defun anki-editor-cloze-region-auto-incr (&optional arg)
+      "Cloze region without hint and increase card number."
+      (interactive)
+      (anki-editor-cloze-region my-anki-editor-cloze-number "")
+      (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+      (forward-sexp))
+    (defun anki-editor-cloze-region-dont-incr (&optional arg)
+      "Cloze region without hint using the previous card number."
+      (interactive)
+      (anki-editor-cloze-region (1- my-anki-editor-cloze-number) "")
+      (forward-sexp))
+    (defun anki-editor-reset-cloze-number (&optional arg)
+      "Reset cloze number to ARG or 1"
+      (interactive)
+      (setq my-anki-editor-cloze-number (or arg 1)))
+    (defun anki-editor-push-tree ()
+      "Push all notes under a tree."
+      (interactive)
+      (anki-editor-push-notes '(4))
+      (anki-editor-reset-cloze-number))
+    ;; Initialize
+    (anki-editor-reset-cloze-number)
+    )
+  ;; Org-capture templates
+  (setq org-my-anki-file "/Users/dgonzalez/org/anki.org")
+  (add-to-list 'org-capture-templates
+               '("a" "Anki basic"
+                 entry
+                 (file+headline org-my-anki-file "Dispatch Shelf")
+                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: New\n:END:\n** Front\n%?\n** Back\n%x\n"))
+  (add-to-list 'org-capture-templates
+               '("A" "Anki cloze"
+                 entry
+                 (file+headline org-my-anki-file "Dispatch Shelf")
+                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: New\n:END:\n** Text\n%x\n** Extra\n"))
 
-;; Allow Emacs to access content from clipboard.
-(setq x-select-enable-clipboard t
-      x-select-enable-primary t)
+  ;; Allow Emacs to access content from clipboard.
+  (setq x-select-enable-clipboard t
+        x-select-enable-primary t)
 #+END_SRC
 
 For distraction-free writing:
 #+BEGIN_SRC emacs-lisp
-(use-package centered-cursor-mode
-  :config
-  (setq ccm-recenter-at-end-of-file t))
+  (use-package centered-cursor-mode
+    :config
+    (setq ccm-recenter-at-end-of-file t))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package writeroom-mode)
+  (use-package writeroom-mode)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (use-package multi-term)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package racket-mode)
+#+END_SRC
+
+Disallow using tabs for indenting
+#+BEGIN_SRC  emacs-lisp
+  (setq indent-tabs-mode nil) 
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; (add-hook 'web-mode-hook
+  ;;       (lambda ()
+  ;;         ;; short circuit js mode and just do everything in jsx-mode
+  ;;         (if (equal web-mode-content-type "javascript")
+  ;;             (web-mode-set-content-type "jsx")
+  ;;           (message "now set to: %s" web-mode-content-type))))
+#+END_SRC
+
+	
+
+
+Eslint javascript:
+#+BEGIN_SRC emacs-lisp
+  (require 'web-mode)
+  ;; disable jshint since we prefer eslint checking
+  (setq-default flycheck-disabled-checkers
+                (append flycheck-disabled-checkers
+                        '(javascript-jshint)))
+
+  (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
+  ;; use eslint with web-mode for jsx files
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
+  (defun my-web-mode-hook ()
+    "Hooks for Web mode. Adjust indents"
+              ;;; http://web-mode.org/
+
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-css-indent-offset 2)
+    (setq web-mode-code-indent-offset 2))
+  (add-to-list 'web-mode-indentation-params '("lineup-args" . nil))
+  (add-to-list 'web-mode-indentation-params '("lineup-calls" . nil))
+  (add-to-list 'web-mode-indentation-params '("lineup-concats" . nil))
+  (add-to-list 'web-mode-indentation-params '("lineup-ternary" . nil))
+  (add-hook 'web-mode-hook
+            (lambda ()
+              (if (equal web-mode-content-type "javascript")
+                  (web-mode-set-content-type "jsx")
+                (message "now set to: %s" web-mode-content-type))))
+
+  (add-hook 'web-mode-hook  'my-web-mode-hook)
+
+  ;; use local eslint from node_modules before global
+  ;; http://emacs.stackexchange.com/questions/21205/flycheck-with-file-relative-eslint-executable
+  (defun my/use-eslint-from-node-modules ()
+    (let* ((root (locate-dominating-file
+                  (or (buffer-file-name) default-directory)
+                  "node_modules"))
+           (eslint (and root
+                        (expand-file-name "node_modules/eslint/bin/eslint.js"
+                                          root))))
+      (when (and eslint (file-executable-p eslint))
+        (setq-local flycheck-javascript-eslint-executable eslint))))
+  (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
+  (setq-default indent-tabs-mode nil)
+
+
+#+END_SRC

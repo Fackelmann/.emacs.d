@@ -3,13 +3,8 @@
 *** https://www.daemonology.net/hn-daily/index.rss
 *** http://www.daemonology.net/hn-weekly-ask/index.rss
 *** http://www.greghendershott.com/feeds/all.rss.xml
-** Racket :software:
-*** https://racket-news.com/feeds/all.rss.xml
-*** https://defn.io/index.xml
 ** Rationality                                                  :rationality:
-*** https://fs.blog/feed/
 *** https://www.lesswrong.com/feed.xml?view=curated-rss
-*** https://slatestarcodex.com/feed/
 *** https://www.scottaaronson.com/blog/?feed=rss2
 *** https://rationalnewsletter.com/issues.atom
 http://cognitivemedium.com/feed.xml
@@ -17,5 +12,6 @@ http://cognitivemedium.com/feed.xml
 ** Blogs                                                              :blogs:
 *** https://danielgplaza.com/index.xml
 *** http://feeds.feedburner.com/scotthyoung/HAHx?fmt=xml
-** Hardware                                                        :hardware:
-*** https://www.pine64.org/feed/
+** Videos
+:videos:
+*** https://www.youtube.com/feeds/videos.xml?channel_id=UCAiiOTio8Yu69c3XnR7nQBQ
