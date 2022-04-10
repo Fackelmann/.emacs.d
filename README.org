@@ -105,13 +105,7 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
     :config
     (setq org-default-notes-file (concat org-directory "/inbox.org"))
     (setq org-agenda-file-regexp "\\`\\\([^.].*\\.org\\\|[0-9]\\\{8\\\}\\\(\\.gpg\\\)?\\\)\\'")
-    (setq org-agenda-files (list "~/org/tasks.org"
-                                 "~/org/work/tasks_work.org"
-                                 "~/org/work/meetings.org"
-                                 "~/org/work/projects"
-                                 "~/org/personal/habits.org"
-                                 "~/org/personal/scheduled.org"
-                                 "~/org/personal/projects"))
+    (setq org-agenda-files (directory-files-recursively  "~/org/" "\.org$"))
     (setq org-log-done t)
     (setq org-log-into-drawer t)
     (setq org-todo-keywords
@@ -900,4 +894,30 @@ Eslint javascript:
   (setq-default indent-tabs-mode nil)
 
 
+#+END_SRC
+
+Perspective, workspaces
+#+BEGIN_SRC emacs-lisp
+(use-package perspective
+  :ensure t  ; use `:straight t` if using straight.el!
+  :bind (("C-x k" . persp-kill-buffer*))
+  :init
+  (persp-mode))
+#+END_SRC
+
+Rust:
+#+BEGIN_SRC emacs-lisp
+(use-package rust-mode
+  :ensure t)
+#+END_SRC
+
+Emojify:
+#+BEGIN_SRC emacs-lisp
+(use-package emojify
+  :hook (after-init . global-emojify-mode))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-mode
+  :ensure t)
 #+END_SRC
