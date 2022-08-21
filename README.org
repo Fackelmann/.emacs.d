@@ -901,3 +901,10 @@ Emojify:
   (define-key beancount-mode-map (kbd "C-c C-p") #'outline-previous-visible-heading)
   (define-key beancount-mode-map (kbd "C-c o") #'beancount-cycle-buffer)
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package pinentry
+    :config
+    (setq epg-pinentry-mode 'loopback))
+#+END_SRC
+
