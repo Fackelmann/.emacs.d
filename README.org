@@ -11,6 +11,12 @@ Initialize ~package.el~:
   (require 'package)
 #+END_SRC
 
+Suppress default prefix key warning for perspective.el. See https://github.com/nex3/perspective-el
+
+#+BEGIN_SRC emacs-lisp
+    (setq persp-suppress-no-prefix-key-warning t)
+#+END_SRC
+
 Add Melpa and Elpa:
 
 #+BEGIN_SRC emacs-lisp
@@ -24,14 +30,20 @@ By default, Emacs automatically loads all installed packages in subsecuent sessi
   (setq package-enable-at-startup nil)
 #+END_SRC
 
-Install ~use-package.el~ if it's not installed already:
+Install ~quelpa.el~  and ~quelpa-use-package~ if they are not installed already:
 #+BEGIN_SRC emacs-lisp
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
-
-  (eval-when-compile
-    (require 'use-package))
+  (unless (package-installed-p 'quelpa)
+    (with-temp-buffer
+      (url-insert-file-contents "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
+      (eval-buffer)
+      (quelpa-self-upgrade)))
+  (quelpa
+   '(quelpa-use-package
+     :fetcher git
+     :url "https://github.com/quelpa/quelpa-use-package.git"))
+  (require 'quelpa-use-package)
+  (custom-set-variables
+   '(ns-command-modifier 'meta))
 #+END_SRC
 
 And treat every package as though it had specified using ~:ensure t~. This will automatically install all packages in a new system.
@@ -74,6 +86,31 @@ And I like having the clock in the mode line, so I can easily tell the time when
 Wrap around lines:
 #+BEGIN_SRC emacs-lisp
   (global-visual-line-mode t)
+#+END_SRC
+
+Display number lines in all buffers
+#+BEGIN_SRC emacs-lisp
+  (global-display-line-numbers-mode)
+#+END_SRC
+
+Set up emacsclient to use emacs when a command requires and editor.
+
+#+BEGIN_SRC emacs-lisp
+  (server-start)
+#+END_SRC
+
+Also need to set the following variables in ~.bashrc~:
+
+#+BEGIN_SRC
+  export EDITOR=emacsclient
+  export VISUAL=emacsclient
+  # Open regular emacs when I don't have a server running
+  export ALTERNATE_EDITOR=/usr/local/bin/emacs
+#+END_SRC
+
+Show matching parents when mark is on one of them.
+#+BEGIN_SRC emacs-lisp
+  (show-paren-mode 1)
 #+END_SRC
 
 Show calendar week in calendar:
@@ -233,16 +270,18 @@ ace-window. Jump to other window by typing a character. And set the characters s
 Magit. Use git without the command line.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :bind ("C-x g" . magit-status)
-    :config (setq magit-save-repository-buffers nil))
+    (use-package magit
+      :bind ("C-x g" . magit-status)
+      :config (setq magit-save-repository-buffers nil)
+      (pinentry-start))
 #+END_SRC
 
 undo-tree graphically shows the state of emacs undo tree and lets you navigate through it.
 
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
-    :init (global-undo-tree-mode))
+    :init (global-undo-tree-mode)
+    (setq backup-directory-alist '(("." . "~/.emacs.d/backups"))))
 #+END_SRC
 
 helm. Incremental completion and selection
@@ -281,14 +320,6 @@ Save and record macros for later use.
   (elmacro-mode)
 #+END_SRC
 
-Emacs native feed reader:
-#+BEGIN_SRC emacs-lisp
-  (use-package elfeed)
-  (use-package elfeed-org)
-  (elfeed-org)
-  (global-set-key (kbd "C-x w") 'elfeed)
-  (setq browse-url-browser-function 'eww-browse-url)
-#+END_SRC
 
 Helm support for lsp.
 #+BEGIN_SRC emacs-lisp
@@ -365,205 +396,18 @@ Yasnippet, for template autocompletion
     :init (yas-global-mode 1))
 #+END_SRC
 
-Mode for managing multiple terminals in emacs. The dedicated terminal window is useful for debugging, as it is always visible
-#+BEGIN_SRC emacs-lisp
-  (use-package multi-term
-    :config
-    (setq multi-term-program "/bin/bash"))
-#+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  (define-key term-raw-map (kbd "C-c C-j") 'term-line-mode)
-  (define-key term-mode-map (kbd "C-c C-k") 'term-char-mode)
-#+END_SRC
 
-* Tramp
 
-I sometimes use tramp for remote development. I wish it worked better, I usually end up going back to an emacs session over ssh.
-
-Set up remote lsp client.
-#+BEGIN_SRC emacs-lisp
-  ;;  (lsp-register-client
-  ;;   (make-lsp-client :new-connection (lsp-tramp-connection "pyls")
-  ;;                    :major-modes '(python-mode)
-  ;;                    :remote? t
-  ;;                    :server-id 'pyls-remote))
-  ;;  (setq lsp-restart 'ignore)
-#+END_SRC
-
-Trying to make Tramp faster by reducing the verbose output and never expiring the cache (need to make sure nothing besides Tramp modifies the files).
-
-#+BEGIN_SRC emacs-lisp
-  (setq remote-file-name-inhibit-cache nil)
-  (setq tramp-verbose 1)
-#+END_SRC
-
-Configure tramp to work with bash on remote and load my profile.
-#+BEGIN_SRC emacs-lisp
-  (setq explicit-shell-file-name "/bin/bash")
-#+END_SRC
 
 * Personal config
 There are some packages I don't want to load in my work laptop.
 
-~org-roam~ Zettlekasten system. Similar to [[roamresearch.com][Roam]], but open and in plain text!
-~deft~ To quickly search my zettlekasten notes.
-~helm-bibtex~ and ~org-ref~, to manage references in ~org-roam~.
-~mu4e~ Mail client in emacs.
+
 ~pdf-tools~ Read and annotate PDFs from within emacs.
 
+
 #+BEGIN_SRC emacs-lisp
-  ;; Helm bibtex 04/01
-  (autoload 'helm-bibtex "helm-bibtex" "" t)
-  (setq bibtex-completion-bibliography
-        '("/Users/dgonzalez/org-roam/zotero-library.bib"))
-  (setq bibtex-completion-pdf-field "file")
-
-  (setq bibtex-completion-format-citation-functions
-        '((org-mode      . bibtex-completion-format-citation-default)
-          (latex-mode    . bibtex-completion-format-citation-cite)
-          (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
-          (default       . bibtex-completion-format-citation-default)))
-  (global-set-key (kbd "C-c b") 'helm-bibtex)
-  ;;Org-roam 04/12/20
-  ;; Updated on 02/04/22 https://lucidmanager.org/productivity/taking-notes-with-emacs-org-mode-and-org-roam/
-
-  (use-package org-roam
-    :after org
-    :init (setq org-roam-v2-ack t) ;; Acknowledge V2 upgrade
-    :custom
-    (org-roam-directory "~/org-roam")
-    :config
-    (org-roam-db-autosync-enable)
-    (require 'org-roam-dailies)
-    :bind (("C-c n f" . org-roam-node-find)
-           ("C-c n r" . org-roam-node-random)		    
-           :map org-mode-map
-           (("C-c n i" . org-roam-node-insert)
-            ("C-c n o" . org-id-get-create)
-            ("C-c n t" . org-roam-tag-add)
-            ("C-c n a" . org-roam-alias-add)
-            ("C-c n l" . org-roam-buffer-toggle))
-           :map org-roam-dailies-map
-           ("Y" . org-roam-dailies-capture-yesterday)
-           ("T" . org-roam-dailies-capture-tomorrow))
-    :bind-keymap
-    ("C-c n y" . org-roam-dailies-map))
-
-  (require 'org-roam-protocol)
-  (setq org-roam-link-title-format "R:%s")
-  ;;    (org-roam-db-autosync-mode)
-  ;; I like my filenames to be only given by timestamp, so removing title (which can change.
-  (setq org-roam-capture-templates '(("d" "default" plain "%?"
-                                      :target (file+head "%<%Y%m%d%H%M%S>.org"
-                                                         "#+title: ${title}\n#+date: %u\n")
-                                      :unnarrowed t)
-                                     ("o" "other" plain "%?"
-                                      :target (file+head "%<%Y%m%d%H%M%S>.org"
-                                                         "#+title: ${title}\n#+date: %u\n")
-                                      :unnarrowed t)))
-  (setq org-roam-dailies-capture-templates '(("d" "default" entry"* %?"
-                                              :target (file+head "%<%Y-%m-%d>.org"
-                                                                 "#+title: %<%Y-%m-%d>\n")
-                                              :unnarrowed t)))
-  ;;    (setq org-roam-dailies-capture-templates '(("d" "default" entry "* %?"
-  ;;                                        :target (file+head "%<%Y%m%d%H%M%S>.org"
-  ;;                                                           "#+title: ${title}\n#+date: %u\n")
-  ;;                                        :unnarrowed t)))
-  (setq org-roam-capture-ref-templates '(("i" "internet" plain "%?"
-                                          :target (file+head "%<%Y%m%d%H%M%S>.org"
-                                                             "#+title: ${title}\n#+date: %u\n${body}")
-                                          :unnarrowed t)))
-  ;;    (setq org-roam-capture-templates
-  ;;          '(("d" "default" plain (function org-roam-capture--get-point)
-  ;;             "%?"
-  ;;             :file-name "%<%Y%m%d%H%M%S>"
-  ;;             :head "#+TITLE: ${title}\n"
-  ;;             :unnarrowed t)))
-  ;;          time-stamp-start "#\\+lastmod: [\t]*")
-  (setq org-roam-graph-executable "/usr/local/bin/dot")
-  (setq org-roam-graph-viewer "/Applications/Firefox Nightly.app/Contents/MacOS/firefox")
-
-
-  (use-package deft
-    :after org
-    :bind
-    ("C-c n d" . deft)
-    :custom
-    ;; We don't want recursion. The reason is that we have the /ref  subdirectory for literature notes, and I don't want to clutter my deft results
-    (deft-recursive nil)
-    (deft-strip-summary-regexp ":PROPERTIES:\n\\(.+\n\\)+:END:\n")
-    (deft-use-filter-string-for-filename t)
-    (deft-default-extension "org")
-    (deft-directory "~/org-roam"))
-
-
-
-
-  (use-package org-ref)
-  ;; see org-ref for use of these variables
-  (setq reftex-default-bibliography '("/Users/dgonzalez/org-roam/zotero-library.bib"))
-  (setq org-ref-default-bibliography '("/Users/dgonzalez/org-roam/zotero-library.bib"))
-  (setq org-ref-bibliography-notes '("/Users/dgonzalez/org-roam/bibnotes.org"))
-
-  ;; Literature notes in org-roam 08/22/20
-  (use-package org-roam-bibtex
-    :after org-roam
-    :hook (org-roam-mode . org-roam-bibtex-mode)
-    :bind (:map org-mode-map
-                (("C-c n a" . orb-note-actions))))
-
-
-  (setq 
-   orb-templates
-   '(("r" "ref" plain (function org-roam-capture--get-point) ""
-      :file-name "refs/${citekey}"
-      :head "#+TITLE: ${citekey}: ${title}\n#+ROAM_KEY: ${ref}\n" ; <--
-      :unnarrowed t)))
-
-  ;; Add mu4e mail client
-  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
-  (require 'mu4e)
-  (add-to-list 'mu4e-view-actions
-               '("ViewInBrowser" . mu4e-action-view-in-browser) t)
-  (setq
-   mue4e-headers-skip-duplicates  t
-   mu4e-view-show-images t
-   mu4e-view-show-addresses t
-   mu4e-compose-format-flowed nil
-   mu4e-date-format "%y/%m/%d"
-   mu4e-headers-date-format "%Y/%m/%d"
-   mu4e-change-filenames-when-moving t
-   mu4e-attachments-dir "~/Downloads"
-   user-mail-address "dan@danielgplaza.com"
-
-   mu4e-maildir       "~/Mail/fastmail"   ;; top-level Maildir
-   ;; note that these folders below must start with /
-   ;; the paths are relative to maildir root
-   mu4e-refile-folder "/Archive"
-   mu4e-sent-folder   "/Sent"
-   mu4e-drafts-folder "/Drafts"
-   mu4e-trash-folder  "/Trash")
-
-  ;; this setting allows to re-sync and re-index mail
-  ;; by pressing U
-  (setq mu4e-get-mail-command  "mbsync -a")
-
-
-  (setq
-   message-send-mail-function   'smtpmail-send-it
-   smtpmail-default-smtp-server "smtp.fastmail.com"
-   smtpmail-smtp-server         "smtp.fastmail.com"
-   smtpmail-stream-type 'starttls
-   smtpmail-smtp-service 587
-   smtp-local-domain "fastmail.com")
-
-  (global-set-key (kbd "C-x m") 'mu4e)
-
-  (fset 'my-move-to-trash "mTrash")
-  (define-key mu4e-headers-mode-map (kbd "d") 'my-move-to-trash)
-  (define-key mu4e-view-mode-map (kbd "d") 'my-move-to-trash)
-
   (setenv "PKG_CONFIG_PATH"
           (f-join
            (file-name-as-directory
@@ -581,36 +425,12 @@ There are some packages I don't want to load in my work laptop.
 #+END_SRC
 
 * Other
-Wrap lines when they reach the end of the window:
-
-#+BEGIN_SRC emacs-lisp
-  (global-visual-line-mode t)
-#+END_SRC
-
-Display number lines in all buffers
-#+BEGIN_SRC emacs-lisp
-  (global-display-line-numbers-mode)
-#+END_SRC
 
 Enable ligatures in [[https://github.com/tonsky/FiraCode][FiraCode]] font.
 #+BEGIN_SRC emacs-lisp
   (if (fboundp 'mac-auto-operator-composition-mode) (mac-auto-operator-composition-mode))
 #+END_SRC
 
-Gruvbox theme. Good contrast and colors.
-
-#+BEGIN_SRC emacs-lisp
-  ;; 05/28/20 gruvbox theme
-  ;; (use-package gruvbox-theme
-  ;;   :config
-  ;;   (load-theme 'gruvbox-dark-medium t)
-  ;;   (let ((line (face-attribute 'mode-line :underline)))
-  ;;     (set-face-attribute 'mode-line          nil :overline   line)
-  ;;     (set-face-attribute 'mode-line-inactive nil :overline   line)
-  ;;     (set-face-attribute 'mode-line-inactive nil :underline  line)
-  ;;     (set-face-attribute 'mode-line          nil :box        nil)
-  ;;     (set-face-attribute 'mode-line-inactive nil :box        nil)))
-#+END_SRC
 
 Trying Spacegray theme.
 #+BEGIN_SRC emacs-lisp
@@ -618,27 +438,6 @@ Trying Spacegray theme.
   (use-package doom-themes :defer t)
   (load-theme 'doom-palenight t)
   (doom-themes-visual-bell-config)
-#+END_SRC
-
-
-Set up emacsclient to use emacs when a command requires and editor.
-
-#+BEGIN_SRC emacs-lisp
-  (server-start)
-#+END_SRC
-
-Also need to set the following variables in ~.bashrc~:
-
-#+BEGIN_SRC
-  export EDITOR=emacsclient
-  export VISUAL=emacsclient
-  # Open regular emacs when I don't have a server running
-  export ALTERNATE_EDITOR=/usr/local/bin/emacs
-#+END_SRC
-
-Show matching parents when mark is on one of them.
-#+BEGIN_SRC emacs-lisp
-  (show-paren-mode 1)
 #+END_SRC
 
 Set up Scheme for working on SICP.
@@ -657,6 +456,7 @@ Set keybinding for changing tabs
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-x t RET") 'tab-bar-switch-to-tab)
 #+END_SRC
+
 * Custom functions
 
 Kill all non-shell buffers. 
@@ -684,8 +484,9 @@ Kill all non-shell buffers.
 
 Create a new shell.
 #+BEGIN_SRC emacs-lisp
-  (fset 'nshell
-        "\C-u\370shell")
+  (defun nshell (name)
+    (interactive "sShell name: ")
+    (shell (concat "shell-" name)))
 #+END_SRC
 
 
@@ -710,48 +511,9 @@ Some hooks I wrote for the ~pomidor~ package.
 
 
 * Testing
-Automatically create Table of contents of org document
-#+BEGIN_SRC emacs-lisp
-  (use-package toc-org
-    :ensure t
-    :init
-    (setq toc-org-max-depth 3)
-    :config
-    (add-hook 'org-mode-hook 'toc-org-mode))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-download)
-#+END_SRC
-
-Don't break long lines in ~ansi-term~:
-#+BEGIN_SRC emacs-lisp
-  (setq term-suppress-hard-newline t)
-#+END_SRC
+Some packages that I'm testing out and they haven't made it to my final setup yet
 
 
-Proselint:
-#+BEGIN_SRC emacs-lisp
-  (flycheck-define-checker proselint
-    "A linter for prose."
-    :command ("proselint" source-inplace)
-    :error-patterns
-    ((warning line-start (file-name) ":" line ":" column ": "
-              (id (one-or-more (not (any " "))))
-              (message) line-end))
-    :modes (gfm-mode
-            markdown-mode
-            org-mode
-            text-mode))
-
-  (add-to-list 'flycheck-checkers 'proselint)
-
-
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package eprime-mode)
-#+END_SRC
 
 
 #+BEGIN_SRC emacs-lisp
@@ -764,12 +526,6 @@ Proselint:
   (setq python-shell-interpreter "python3")
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-                                          ;hydra
-  (use-package hydra
-    :config
-    (use-package use-package-hydra))
-#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
   ;; Allow Emacs to access content from clipboard.
@@ -777,87 +533,14 @@ Proselint:
         x-select-enable-primary t)
 #+END_SRC
 
-For distraction-free writing:
-#+BEGIN_SRC emacs-lisp
-  (use-package centered-cursor-mode
-    :config
-    (setq ccm-recenter-at-end-of-file t))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package writeroom-mode)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package multi-term)
-#+END_SRC
-
 #+BEGIN_SRC emacs-lisp
   (use-package racket-mode)
+  (setq racket-program "/Applications/Racket v8.5/bin/racket")
 #+END_SRC
 
 Disallow using tabs for indenting
 #+BEGIN_SRC  emacs-lisp
   (setq indent-tabs-mode nil) 
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; (add-hook 'web-mode-hook
-  ;;       (lambda ()
-  ;;         ;; short circuit js mode and just do everything in jsx-mode
-  ;;         (if (equal web-mode-content-type "javascript")
-  ;;             (web-mode-set-content-type "jsx")
-  ;;           (message "now set to: %s" web-mode-content-type))))
-#+END_SRC
-
-	
-
-
-Eslint javascript:
-#+BEGIN_SRC emacs-lisp
-  (require 'web-mode)
-  ;; disable jshint since we prefer eslint checking
-  (setq-default flycheck-disabled-checkers
-                (append flycheck-disabled-checkers
-                        '(javascript-jshint)))
-
-  (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
-  ;; use eslint with web-mode for jsx files
-  (flycheck-add-mode 'javascript-eslint 'web-mode)
-  (defun my-web-mode-hook ()
-    "Hooks for Web mode. Adjust indents"
-              ;;; http://web-mode.org/
-
-    (setq web-mode-markup-indent-offset 2)
-    (setq web-mode-css-indent-offset 2)
-    (setq web-mode-code-indent-offset 2))
-  (add-to-list 'web-mode-indentation-params '("lineup-args" . nil))
-  (add-to-list 'web-mode-indentation-params '("lineup-calls" . nil))
-  (add-to-list 'web-mode-indentation-params '("lineup-concats" . nil))
-  (add-to-list 'web-mode-indentation-params '("lineup-ternary" . nil))
-  (add-hook 'web-mode-hook
-            (lambda ()
-              (if (equal web-mode-content-type "javascript")
-                  (web-mode-set-content-type "jsx")
-                (message "now set to: %s" web-mode-content-type))))
-
-  (add-hook 'web-mode-hook  'my-web-mode-hook)
-
-  ;; use local eslint from node_modules before global
-  ;; http://emacs.stackexchange.com/questions/21205/flycheck-with-file-relative-eslint-executable
-  (defun my/use-eslint-from-node-modules ()
-    (let* ((root (locate-dominating-file
-                  (or (buffer-file-name) default-directory)
-                  "node_modules"))
-           (eslint (and root
-                        (expand-file-name "node_modules/eslint/bin/eslint.js"
-                                          root))))
-      (when (and eslint (file-executable-p eslint))
-        (setq-local flycheck-javascript-eslint-executable eslint))))
-  (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
-  (setq-default indent-tabs-mode nil)
-
-
 #+END_SRC
 
 Perspective, workspaces
@@ -887,19 +570,17 @@ Emojify:
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-board
-    :ensure t)
-(setq org-id-link-to-org-use-id t)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
+  (use-package beancount
+    :quelpa ((beancount :repo "beancount/beancount-mode" :fetcher github))
+    :ensure t
+    :init
     (add-to-list 'load-path "~/.emacs.d/beancount-mode-main")
-    (require 'beancount)
     (add-to-list 'auto-mode-alist '("\\.beancount\\'" . beancount-mode))
     (add-hook 'beancount-mode-hook #'outline-minor-mode)
-  (define-key beancount-mode-map (kbd "C-c C-n") #'outline-next-visible-heading)
-  (define-key beancount-mode-map (kbd "C-c C-p") #'outline-previous-visible-heading)
-  (define-key beancount-mode-map (kbd "C-c o") #'beancount-cycle-buffer)
+    :bind (:map beancount-mode-map
+                ("C-c C-n" . outline-next-visible-heading)
+                ("C-c C-p" . outline-previous-visible-heading)
+                ("C-c o" . beancount-cycle-buffer)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -907,4 +588,3 @@ Emojify:
     :config
     (setq epg-pinentry-mode 'loopback))
 #+END_SRC
-
