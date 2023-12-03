@@ -49,6 +49,7 @@ Install ~quelpa.el~  and ~quelpa-use-package~ if they are not installed already:
 And treat every package as though it had specified using ~:ensure t~. This will automatically install all packages in a new system.
 #+BEGIN_SRC emacs-lisp
   (require 'use-package-ensure)
+  (setq use-package-verbose t)
   (setq use-package-always-ensure t)
 #+END_SRC
 
@@ -243,10 +244,30 @@ Many of this settings (mainly the part related to tasks and todos) were taken an
 ** org-journal
 
 #+BEGIN_SRC emacs-lisp
+  ;;  Add template to daily journal
+  ;; Captures all input arguments to a list r. We don't really need them.
+    (defun gpdaniel/insert-journal-template (&rest r)
+      (when (not (file-exists-p (buffer-file-name (current-buffer))))
+        (save-excursion
+          (insert
+           (concat "\n** ✅ To Do Today [/]\n"
+                   "- [ ]\n"
+                   "- [ ]\n"
+                   "- [ ]\n"
+                   "- [ ]\n"
+                   "- [ ]\n"
+                   "** 📝 Notes\n"
+                   "** 📓 Interstitial Journal\n"
+                   "** ⚡ Outcomes\n"
+                   "*** Summary\n"
+                   "*** Artifacts\n")))))
     (use-package org-journal
       :bind ("C-c C-k" . org-journal-new-scheduled-entry)
-      :config 
+      :init
+      (advice-add 'org-journal-new-entry :after #'gpdaniel/insert-journal-template)
+      :config
       (add-to-list 'org-agenda-files org-journal-dir))
+
 #+END_SRC
 
 * Packages
@@ -291,26 +312,26 @@ helm. Incremental completion and selection
   ;; Ido mode didn't allow me to add a space to a filename in org roam
   ;; In any case helm seems more popular nowadays
 
-  (use-package helm)
-  (helm-mode 1)
-  (define-key global-map [remap find-file] 'helm-find-files)
-  (define-key global-map [remap occur] 'helm-occur)
-  (define-key global-map [remap list-buffers] 'helm-buffers-list)
-  (define-key global-map [remap dabbrev-expand] 'helm-dabbrev)
-  (define-key global-map [remap execute-extended-command] 'helm-M-x)
-  (define-key global-map [remap apropos-command] 'helm-apropos)
-  (unless (boundp 'completion-in-region-function)
-    (define-key lisp-interaction-mode-map [remap completion-at-point] 'helm-lisp-completion-at-point)
-    (define-key emacs-lisp-mode-map       [remap completion-at-point] 'helm-lisp-completion-at-point))
-  (add-hook 'kill-emacs-hook #'(lambda () (and (file-exists-p "/tmp/helm-cfg.el") (delete-file "/tmp/helm-cfg.el"))))
+;;  (use-package helm)
+;;  (helm-mode 1)
+;;  (define-key global-map [remap find-file] 'helm-find-files)
+;;  (define-key global-map [remap occur] 'helm-occur)
+;;  (define-key global-map [remap list-buffers] 'helm-buffers-list)
+  ;;(define-key global-map [remap dabbrev-expand] 'helm-dabbrev)
+;;  (define-key global-map [remap execute-extended-command] 'helm-M-x)
+;;  (define-key global-map [remap apropos-command] 'helm-apropos)
+;;  (unless (boundp 'completion-in-region-function)
+;;    (define-key lisp-interaction-mode-map [remap completion-at-point] 'helm-lisp-completion-at-point)
+;;    (define-key emacs-lisp-mode-map       [remap completion-at-point] 'helm-lisp-completion-at-point))
+;;  (add-hook 'kill-emacs-hook #'(lambda () (and (file-exists-p "/tmp/helm-cfg.el") (delete-file "/tmp/helm-cfg.el"))))
 #+END_SRC
 
 Activate fuzzy matching in ~helm~.
 #+BEGIN_SRC emacs-lisp
-  (setq helm-mode-fuzzy-match t)
-  (setq helm-completion-in-region-fuzzy-match t)
-  (setq helm-completion-style 'emacs)
-  (setq completion-styles (if (version<= emacs-version "27.0") '(helm-flex) '(flex)))
+;;  (setq helm-mode-fuzzy-match t)
+;;  (setq helm-completion-in-region-fuzzy-match t)
+;;  (setq helm-completion-style 'emacs)
+;;  (setq completion-styles (if (version<= emacs-version "27.0") '(helm-flex) '(flex)))
 #+END_SRC
 
 Save and record macros for later use.
@@ -323,7 +344,7 @@ Save and record macros for later use.
 
 Helm support for lsp.
 #+BEGIN_SRC emacs-lisp
-  (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+;;  (use-package helm-lsp :commands helm-lsp-workspace-symbol)
 
   ;;  
 #+END_SRC
@@ -338,9 +359,8 @@ Language Server Protocol mode. Access docstrings, definitions, etc.
                          (let ((lsp-keymap-prefix "C-c l"))))))
     ;;                        (lsp-enable-which-key-integration)))))
     :config (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-    :config (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+;;    :config (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
     :commands lsp)
-
 #+END_SRC
 
 
@@ -369,9 +389,9 @@ Record used keys, to improve workflow.
 
 Eye candy for the mode line.
 #+BEGIN_SRC emacs-lisp
-  (use-package doom-modeline
-    :ensure t
-    :init (doom-modeline-mode 1))
+;;  (use-package doom-modeline
+;;    :ensure t
+;;    :init (doom-modeline-mode 1))
 #+END_SRC
 
 Jump to a specific character in the visible frames.
@@ -408,13 +428,13 @@ There are some packages I don't want to load in my work laptop.
 
 
 #+BEGIN_SRC emacs-lisp
-  (setenv "PKG_CONFIG_PATH"
-          (f-join
-           (file-name-as-directory
-            (nth 0
-                 (split-string
-                  (shell-command-to-string "brew --prefix"))))
-           "Cellar" "libffi" "3.2.1" "lib" "pkgconfig"))
+;;  (setenv "PKG_CONFIG_PATH"
+;;          (f-join
+;;           (file-name-as-directory
+;;            (nth 0
+;;                 (split-string
+;;                  (shell-command-to-string "brew --prefix"))))
+;;           "Cellar" "libffi" "3.2.1" "lib" "pkgconfig"))
   (use-package pdf-tools
     :ensure t
     :mode ("\\.pdf\\'" . pdf-view-mode)
@@ -588,3 +608,27 @@ Emojify:
     :config
     (setq epg-pinentry-mode 'loopback))
 #+END_SRC
+
+Trying vanilla emacs fido mode instead of Helm
+#+BEGIN_SRC emacs-lisp
+(fido-mode t)
+(icomplete-vertical-mode t)
+#+END_SRC 
+
+#+BEGIN_SRC 
+(use-package aspell)
+(use-package define-word)
+(use-package powerthesaurus)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package slime
+    :config
+    (setq inferior-lisp-program "sbcl"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+;; Prevent undo tree files from polluting your git repo
+(setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
+#+END_SRC
+
