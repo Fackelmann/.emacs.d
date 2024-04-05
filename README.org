@@ -57,7 +57,7 @@ Spacegray theme:
     (doom-themes-visual-bell-config))
 #+END_SRC
 
-*Packages
+* Packages
 Magit. Use git without the command line.
 
 #+BEGIN_SRC emacs-lisp
