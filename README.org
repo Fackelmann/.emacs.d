@@ -47,3 +47,12 @@ Wrap around lines:
 #+BEGIN_SRC emacs-lisp
   (global-visual-line-mode t)
 #+END_SRC
+
+* Eyecandy
+Spacegray theme:
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-themes
+    :config
+    (load-theme 'doom-palenight t)
+    (doom-themes-visual-bell-config))
+#+END_SRC
