@@ -12,4 +12,38 @@ Fido mode for minibuffer autocompletion (instead of Helm or Ivy):
 #+BEGIN_SRC emacs-lisp
 (fido-mode t)
 (icomplete-vertical-mode t)
-#+END_SRC 
+#+END_SRC
+
+I don't like the ~custom*~ variables being saved in my config file and cluttering it. I prefer to have them in their own location.
+#+BEGIN_SRC emacs-lisp
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file)
+#+END_SRC
+
+Likewise, I don't like having backup files (~) all over the place. But they are sometimes useful. This setting saves all of them under the same directory.
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+#+END_SRC
+
+Inhibit the startup screen. I'll take the ~scratch~ buffer, thank you very much.
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-startup-screen t)
+#+END_SRC
+
+I barely use the mouse, so the tool bar and menu bar are just taking screen real state.
+
+#+BEGIN_SRC emacs-lisp
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+#+END_SRC
+
+And I like having the clock in the mode line, so I can easily tell the time when I'm in full screen.
+
+#+BEGIN_SRC emacs-lisp
+  (display-time-mode 1)
+#+END_SRC
+
+Wrap around lines:
+#+BEGIN_SRC emacs-lisp
+  (global-visual-line-mode t)
+#+END_SRC
