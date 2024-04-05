@@ -1,6 +1,15 @@
 #+TITLE: Emacs config
 #+AUTHOR: Daniel Gonzalez Plaza
 
+* General configuration
+
+Use command key as meta (macOS):
 #+BEGIN_SRC emacs-lisp
   (setq ns-command-modifier 'meta)
 #+END_SRC
+
+Fido mode for minibuffer autocompletion (instead of Helm or Ivy):
+#+BEGIN_SRC emacs-lisp
+(fido-mode t)
+(icomplete-vertical-mode t)
+#+END_SRC 
