@@ -1,2 +1,6 @@
 #+TITLE: Emacs config
 #+AUTHOR: Daniel Gonzalez Plaza
+
+#+BEGIN_SRC emacs-lisp
+  (setq ns-command-modifier 'meta)
+#+END_SRC
