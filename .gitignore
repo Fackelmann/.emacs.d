@@ -3,6 +3,8 @@ backups/
 bookmarks
 elpa/
 eshell/
+README.el
+custom.el
 ido.last
 org-journal.cache
 transient/
