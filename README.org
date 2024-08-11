@@ -3,6 +3,13 @@
 
 * General configuration
 
+Add Melpa:
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+  (package-initialize)
+#+END_SRC
+
 Use command key as meta (macOS):
 #+BEGIN_SRC emacs-lisp
   (setq ns-command-modifier 'meta)
@@ -52,6 +59,7 @@ Wrap around lines:
 Spacegray theme:
 #+BEGIN_SRC emacs-lisp
   (use-package doom-themes
+    :ensure t
     :config
     (load-theme 'doom-palenight t)
     (doom-themes-visual-bell-config))
