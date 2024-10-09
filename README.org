@@ -78,6 +78,20 @@ Magit. Use git without the command line.
     :after (pinentry))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (use-package org-mode
+    :bind ("C-c l" . org-store-link))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-journal
+    :ensure t
+    :bind ("C-c d" . org-journal-new-entry)
+    :config
+    (setq org-journal-dir "~/Documents/notes/Daily/"))
+#+END_SRC
+#    (setq  dgp/org-journal-daily-template (concat "** Hourly\n"))
+#    (setq org-journal-date-format (concat "%A, %x \n" dgp/org-journal-daily-template))
 
 * Testing
 New packages that I'm testing but might be removed:
