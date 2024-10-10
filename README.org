@@ -3,39 +3,6 @@
 
 * General configuration
 
-I'm using straight.el for reproducibility and source control:
-
-#+BEGIN_SRC emacs-lisp
-  (setq straight-base-dir "~/.emacs.d/straight/")
-  (defvar bootstrap-version)
-  (let ((bootstrap-file
-	 (expand-file-name
-	  "straight/repos/straight.el/bootstrap.el"
-	  (or (bound-and-true-p straight-base-dir)
-	      user-emacs-directory)))
-	(bootstrap-version 7))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-	  (url-retrieve-synchronously
-	   "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-	   'silent 'inhibit-cookies)
-	(goto-char (point-max))
-	(eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
-  ;; Ensure use-package uses straight.el by default
-  (straight-use-package 'use-package)
-#+END_SRC
-
-And make it the default with use-package
-#+BEGIN_SRC emacs-lisp
-  (setq straight-use-package-by-default t)
-#+END_SRC
-
-And immediatly org-mode to avoid problems with straight.el
-#+BEGIN_SRC emacs-lisp
-  (straight-use-package 'org)
-#+END_SRC
-
 Use command key as meta (macOS):
 #+BEGIN_SRC emacs-lisp
   (setq ns-command-modifier 'meta)
@@ -95,9 +62,10 @@ Spacegray theme:
 Magit. Use git without the command line.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package pinentry :ensure t)
+  (use-package pinentry :ensure t :defer t)
   (use-package magit
     :ensure t
+    :defer t
     :bind ("C-x g" . magit-status)
     :config (setq magit-save-repository-buffers nil)
     (pinentry-start)
@@ -128,5 +96,6 @@ New packages that I'm testing but might be removed:
 
 #+BEGIN_SRC emacs-lisp
   (use-package denote
-    :ensure t)
+    :ensure t
+    :defer t)
 #+END_SRC
