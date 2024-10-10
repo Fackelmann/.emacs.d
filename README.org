@@ -33,17 +33,7 @@ And make it the default with use-package
 
 And immediatly org-mode to avoid problems with straight.el
 #+BEGIN_SRC emacs-lisp
-  (use-package org-mode
-    :bind
-    ("C-c l" . org-store-link)
-    ("C-c a" . org-agenda)
-    ("C-c c" . org-capture))
-#+END_SRC
-Add Melpa:
-
-#+BEGIN_SRC emacs-lisp
-    (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-    (package-initialize)
+  (straight-use-package 'org)
 #+END_SRC
 
 Use command key as meta (macOS):
@@ -114,6 +104,17 @@ Magit. Use git without the command line.
     :after (pinentry))
 #+END_SRC
 
+Some essential org-mode bindings:
+#+BEGIN_SRC emacs-lisp
+  (straight-use-package 'org)
+  (use-package org-mode
+    :bind
+    ("C-c l" . org-store-link)
+    ("C-c a" . org-agenda)
+    ("C-c c" . org-capture))
+#+END_SRC
+
+And setting up org-journal for my daily notes:
 #+BEGIN_SRC emacs-lisp
   (use-package org-journal
     :ensure t
