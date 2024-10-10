@@ -3,11 +3,47 @@
 
 * General configuration
 
-Add Melpa:
+I'm using straight.el for reproducibility and source control:
 
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-  (package-initialize)
+  (setq straight-base-dir "~/.emacs.d/straight/")
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+	 (expand-file-name
+	  "straight/repos/straight.el/bootstrap.el"
+	  (or (bound-and-true-p straight-base-dir)
+	      user-emacs-directory)))
+	(bootstrap-version 7))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+	  (url-retrieve-synchronously
+	   "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+	   'silent 'inhibit-cookies)
+	(goto-char (point-max))
+	(eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
+  ;; Ensure use-package uses straight.el by default
+  (straight-use-package 'use-package)
+#+END_SRC
+
+And make it the default with use-package
+#+BEGIN_SRC emacs-lisp
+  (setq straight-use-package-by-default t)
+#+END_SRC
+
+Add Melpa:
+#+BEGIN_SRC emacs-lisp
+    (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+    (package-initialize)
+#+END_SRC
+
+And immediatly org-mode to avoid problems with straight.el
+#+BEGIN_SRC emacs-lisp
+  (use-package org-mode
+    :bind
+    ("C-c l" . org-store-link)
+    ("C-c a" . org-agenda)
+    ("C-c c" . org-capture))
 #+END_SRC
 
 Use command key as meta (macOS):
@@ -78,10 +114,7 @@ Magit. Use git without the command line.
     :after (pinentry))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  (use-package org-mode
-    :bind ("C-c l" . org-store-link))
-#+END_SRC
+
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-journal
@@ -89,9 +122,6 @@ Magit. Use git without the command line.
     :bind ("C-c d" . org-journal-new-entry)
     :config
     (setq org-journal-dir "~/Documents/notes/Daily/"))
-#+END_SRC
-#    (setq  dgp/org-journal-daily-template (concat "** Hourly\n"))
-#    (setq org-journal-date-format (concat "%A, %x \n" dgp/org-journal-daily-template))
 
 * Testing
 New packages that I'm testing but might be removed:
