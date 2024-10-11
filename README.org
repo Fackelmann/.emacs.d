@@ -115,3 +115,11 @@ New packages that I'm testing but might be removed:
     :ensure t
     :defer t)
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode)  ;; Enable which-key globally
+  (setq which-key-idle-delay 0.1))  ;; Time (in seconds) to wait before showing key hints
+#+END_SRC
