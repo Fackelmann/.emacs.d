@@ -75,7 +75,7 @@ Magit. Use git without the command line.
 Some essential org-mode bindings:
 #+BEGIN_SRC emacs-lisp
   (straight-use-package 'org)
-  (use-package org-mode
+  (use-package org
     :bind
     ("C-c l" . org-store-link)
     ("C-c a" . org-agenda)
