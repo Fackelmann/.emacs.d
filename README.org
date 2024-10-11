@@ -98,6 +98,15 @@ undo-tree graphically shows the state of emacs undo tree and lets you navigate t
   (use-package undo-tree
     :init (global-undo-tree-mode))
 #+END_SRC
+
+ace-window. Jump to other window by typing a character. And set the characters so they are all in the home row.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+    :bind ("C-x o" . ace-window)
+    :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+#+END_SRC
+
 * Testing
 New packages that I'm testing but might be removed:
 
