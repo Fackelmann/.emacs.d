@@ -91,6 +91,13 @@ And setting up org-journal for my daily notes:
     (setq org-journal-dir "~/Documents/notes/Daily/"))
 #+END_SRC
 
+
+undo-tree graphically shows the state of emacs undo tree and lets you navigate through it.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree
+    :init (global-undo-tree-mode))
+#+END_SRC
 * Testing
 New packages that I'm testing but might be removed:
 
