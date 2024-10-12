@@ -101,7 +101,10 @@ undo-tree graphically shows the state of emacs undo tree and lets you navigate t
 
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
-    :init (global-undo-tree-mode))
+    :init (global-undo-tree-mode)
+    :config
+    (setq undo-tree-history-directory-alist
+  	`(("." . ,(concat user-emacs-directory "undo-tree-history")))))
 #+END_SRC
 
 ace-window. Jump to other window by typing a character. And set the characters so they are all in the home row.
