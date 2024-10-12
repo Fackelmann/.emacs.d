@@ -74,12 +74,17 @@ Magit. Use git without the command line.
 
 Some essential org-mode bindings:
 #+BEGIN_SRC emacs-lisp
-  (straight-use-package 'org)
   (use-package org
     :bind
     ("C-c l" . org-store-link)
     ("C-c a" . org-agenda)
-    ("C-c c" . org-capture))
+    ("C-c c" . org-capture)
+    :config
+    (setq org-use-speed-commands t)
+    ;; enable bash for babel
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((shell . t))))
 #+END_SRC
 
 And setting up org-journal for my daily notes:
