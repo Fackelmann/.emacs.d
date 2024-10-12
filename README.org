@@ -131,6 +131,7 @@ New packages that I'm testing but might be removed:
     (which-key-mode)  ;; Enable which-key globally
     (setq which-key-idle-delay 0.2))  ;; Time (in seconds) to wait before showing key hints
 #+END_SRC
+
 #+BEGIN_SRC emacs-lisp
   (use-package dashboard
     :ensure t
@@ -142,4 +143,15 @@ New packages that I'm testing but might be removed:
     (setq dashboard-banner-logo-title "Welcome to Emacs, Dani")
     (setq dashboard-footer-messages '("Thinkito V1.0")))
 #+END_SRC
+
+* Custom functions
+
+Insert current date 'Day, YYYY-MM-DD':
+
+#+BEGIN_SRC emacs-lisp
+  (defun insert-current-date ()
+    (interactive)
+    (insert (format-time-string "%A, %Y-%m-%d")))
+
+  (global-set-key (kbd "C-c d") 'insert-current-date)
 #+END_SRC
