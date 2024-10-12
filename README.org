@@ -49,13 +49,13 @@ Wrap around lines:
 #+END_SRC
 
 * Eyecandy
-Spacegray theme:
+
+Dracula theme:
 #+BEGIN_SRC emacs-lisp
-  (use-package doom-themes
+  (use-package dracula-theme
     :ensure t
     :config
-    (load-theme 'doom-palenight t)
-    (doom-themes-visual-bell-config))
+    (load-theme 'dracula t))
 #+END_SRC
 
 * Packages
