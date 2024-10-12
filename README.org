@@ -10,8 +10,8 @@ Use command key as meta (macOS):
 
 Fido mode for minibuffer autocompletion (instead of Helm or Ivy):
 #+BEGIN_SRC emacs-lisp
-(fido-mode t)
-(icomplete-vertical-mode t)
+  (fido-mode t)
+  (icomplete-vertical-mode t)
 #+END_SRC
 
 I don't like the ~custom*~ variables being saved in my config file and cluttering it. I prefer to have them in their own location.
@@ -117,9 +117,10 @@ New packages that I'm testing but might be removed:
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package which-key
-  :ensure t
-  :config
-  (which-key-mode)  ;; Enable which-key globally
-  (setq which-key-idle-delay 0.1))  ;; Time (in seconds) to wait before showing key hints
+  (use-package which-key
+    :ensure t
+    :config
+    (which-key-mode)  ;; Enable which-key globally
+    (setq which-key-idle-delay 0.2))  ;; Time (in seconds) to wait before showing key hints
+#+END_SRC
 #+END_SRC
