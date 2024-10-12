@@ -115,6 +115,15 @@ ace-window. Jump to other window by typing a character. And set the characters s
     :config (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 #+END_SRC
 
+Yasnippets for template insertion (those pesky code blocks!):
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :config
+    (yas-global-mode 1))
+#+END_SRC
+
 * Testing
 New packages that I'm testing but might be removed:
 
