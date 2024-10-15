@@ -171,6 +171,13 @@ New packages that I'm testing but might be removed:
     (setq dashboard-footer-messages '("Thinkito V1.0")))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (use-package moody
+    :config
+    (moody-replace-mode-line-front-space)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
+#+END_SRC
 * Custom functions
 
 Insert current date 'Day, YYYY-MM-DD':
