@@ -53,7 +53,7 @@ Wrap around lines:
 Dracula theme:
 #+BEGIN_SRC emacs-lisp
   (use-package dracula-theme
-    :ensure t
+   :ensure t
     :config
     (load-theme 'dracula t))
 #+END_SRC
