@@ -165,7 +165,8 @@ New packages that I'm testing but might be removed:
     (dashboard-setup-startup-hook)
     (setq dashboard-startup-banner 1)
     (setq dashboard-items '((recents   . 5)
-                            (bookmarks . 5)))
+                            (bookmarks . 5)
+  			  (agenda    . 5)))
     (setq dashboard-banner-logo-title "Welcome to Emacs, Dani")
     (setq dashboard-footer-messages '("Thinkito V1.0")))
 #+END_SRC
