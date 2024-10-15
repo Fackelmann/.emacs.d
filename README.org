@@ -178,6 +178,17 @@ New packages that I'm testing but might be removed:
     (moody-replace-mode-line-buffer-identification)
     (moody-replace-vc-mode))
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package treemacs
+    :ensure t
+    :bind
+    ("C-c t" . treemacs-select-window)
+    ([f8] . treemacs)
+    :config
+    (setq treemacs-width 30
+          treemacs-is-never-other-window t))
+#+END_SRC
 * Custom functions
 
 Insert current date 'Day, YYYY-MM-DD':
