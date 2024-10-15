@@ -84,7 +84,24 @@ Some essential org-mode bindings:
     ;; enable bash for babel
     (org-babel-do-load-languages
      'org-babel-load-languages
-     '((shell . t))))
+     '((shell . t)))
+    ;; don't leave an empty line after inserting  a heading
+    (setq org-blank-before-new-entry
+      	'((heading . nil) (plain-list-item . nil)))
+    (setq org-directory "~/org")
+    (setq org-agenda-files (list "notes.org"))
+    (setq org-enforce-todo-dependencies t)
+    ;; Don't show blocked tasks in agenda
+    (setq org-agenda-dim-blocked-tasks 'invisible)
+    ;; Don't show future scheduled tasks in agenda
+    (setq org-agenda-todo-ignore-scheduled 'future)
+    (defun dgp/org-add-created-date ()
+      "Add a CREATED property with the current date when creating a task."
+      (when (and (org-get-todo-state)
+                 (not (org-entry-get (point) "CREATED")))
+        (org-set-property "CREATED" (format-time-string "[%Y-%m-%d %a]"))))
+    ;; Add hook after change state
+    (add-hook 'org-after-todo-state-change-hook 'dgp/org-add-created-date))
 #+END_SRC
 
 And setting up org-journal for my daily notes:
