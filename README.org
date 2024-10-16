@@ -101,7 +101,17 @@ Some essential org-mode bindings:
                  (not (org-entry-get (point) "CREATED")))
         (org-set-property "CREATED" (format-time-string "[%Y-%m-%d %a]"))))
     ;; Add hook after change state
-    (add-hook 'org-after-todo-state-change-hook 'dgp/org-add-created-date))
+    (add-hook 'org-after-todo-state-change-hook 'dgp/org-add-created-date)
+    ;; Org Capture Template for TODOs to Inbox
+    (setq org-capture-templates
+  	'(("t" "Todo" entry (file "~/org/inbox.org")
+  	   "* TODO %?\n  :PROPERTIES:\n:CREATED: %U\n:END:")))
+    ;; org refile settings
+    (setq org-refile-targets (list
+  			    (cons 'org-agenda-files
+  				  (cons :maxlevel 9))))
+    (setq org-refile-use-outline-path t)
+    (setq org-outline-path-complete-in-steps nil))
 #+END_SRC
 
 And setting up org-journal for my daily notes:
