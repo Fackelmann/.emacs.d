@@ -112,6 +112,12 @@ Some essential org-mode bindings:
   				  (cons :maxlevel 9))))
     (setq org-refile-use-outline-path t)
     (setq org-outline-path-complete-in-steps nil))
+    (setq org-outline-path-complete-in-steps nil)
+    ;; Record when a task is done
+    (setq org-log-done 'time)
+    ;; Change level 4 color to play well with dracula theme
+    (custom-theme-set-faces 'user
+                    `(org-level-4 ((t (:foreground "orange"))))))
 #+END_SRC
 
 And setting up org-journal for my daily notes:
