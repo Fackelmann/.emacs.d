@@ -206,6 +206,14 @@ New packages that I'm testing but might be removed:
     (setq treemacs-width 30
           treemacs-is-never-other-window t))
 #+END_SRC
+
+To automatically commit changes in my documents:
+#+BEGIN_SRC emacs-lisp
+  (use-package git-auto-commit-mode
+    :ensure t
+    :config
+    (setq gac-ask-for-summary-p t))
+#+END_SRC
 * Custom functions
 
 Insert current date 'Day, YYYY-MM-DD':
