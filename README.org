@@ -112,7 +112,6 @@ Some essential org-mode bindings:
   			    (cons 'org-agenda-files
   				  (cons :maxlevel 9))))
     (setq org-refile-use-outline-path t)
-    (setq org-outline-path-complete-in-steps nil))
     (setq org-outline-path-complete-in-steps nil)
     ;; Record when a task is done
     (setq org-log-done 'time)
@@ -158,6 +157,16 @@ Yasnippets for template insertion (those pesky code blocks!):
     (yas-global-mode 1))
 #+END_SRC
 
+Spell checking:
+
+#+BEGIN_SRC emacs-lisp
+  ;; Set aspell as the default spell checker
+  (setq ispell-program-name "aspell")
+  ;; And default dictionary to English
+  (setq ispell-dictionary "english")
+  ;; Enable flyspell mode
+  (add-hook 'text-mode-hook 'flyspell-mode)
+#+END_SRC
 * Testing
 New packages that I'm testing but might be removed:
 
@@ -225,6 +234,7 @@ Insert current date 'Day, YYYY-MM-DD':
 
   (global-set-key (kbd "C-c d") 'insert-current-date)
 #+END_SRC
+
 Following instructions here: https://kchousos.github.io/posts/sicp-in-emacs/
 #+BEGIN_SRC emacs-lisp
   (use-package sicp)
