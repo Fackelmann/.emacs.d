@@ -85,11 +85,12 @@ Some essential org-mode bindings:
     (org-babel-do-load-languages
      'org-babel-load-languages
      '((shell . t)))
+    (setq org-confirm-babel-evaluate nil)
     ;; don't leave an empty line after inserting  a heading
     (setq org-blank-before-new-entry
       	'((heading . nil) (plain-list-item . nil)))
     (setq org-directory "~/org")
-    (setq org-agenda-files (list "notes.org"))
+    (setq org-agenda-files (list "notes.org" "inbox.org"))
     (setq org-enforce-todo-dependencies t)
     ;; Don't show blocked tasks in agenda
     (setq org-agenda-dim-blocked-tasks 'invisible)
