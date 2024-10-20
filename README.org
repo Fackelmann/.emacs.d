@@ -225,3 +225,13 @@ Insert current date 'Day, YYYY-MM-DD':
 
   (global-set-key (kbd "C-c d") 'insert-current-date)
 #+END_SRC
+Following instructions here: https://kchousos.github.io/posts/sicp-in-emacs/
+#+BEGIN_SRC emacs-lisp
+  (use-package sicp)
+  (use-package racket-mode)
+  (use-package ob-racket
+    :straight (ob-racket :type git :host github :repo "hasu/emacs-ob-racket")
+    :init
+    (add-to-list 'org-babel-load-languages '(racket . t)))
+#+END_SRC
+
