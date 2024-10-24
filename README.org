@@ -245,3 +245,10 @@ Following instructions here: https://kchousos.github.io/posts/sicp-in-emacs/
     (add-to-list 'org-babel-load-languages '(racket . t)))
 #+END_SRC
 
+Read feeds with elfeed(;
+#+BEGIN_SRC emacs-lisp
+  (use-package elfeed-org
+    :ensure t
+    :config
+    (elfeed-org))
+#+END_SRC
