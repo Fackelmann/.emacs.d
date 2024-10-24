@@ -167,6 +167,20 @@ Spell checking:
   ;; Enable flyspell mode
   (add-hook 'text-mode-hook 'flyspell-mode)
 #+END_SRC
+
+Run LLM locally with ollama and gptel:
+
+#+BEGIN_SRC emacs-lisp
+  (use-package gptel
+    :ensure t
+    :config
+    (setq
+     gptel-model 'gemma:2b
+     gptel-backend (gptel-make-ollama "Ollama"
+                     :host "localhost:11434"
+                     :stream t
+                     :models '(gemma:2b))))
+#+END_SRC
 * Testing
 New packages that I'm testing but might be removed:
 
