@@ -181,6 +181,12 @@ Run LLM locally with ollama and gptel:
                      :stream t
                      :models '(gemma:2b))))
 #+END_SRC
+
+To have bookmarks directly point to org headings:
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bookmark-heading
+    :ensure t)
+#+END_SRC
 * Testing
 New packages that I'm testing but might be removed:
 
