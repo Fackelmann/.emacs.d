@@ -275,3 +275,8 @@ Read feeds with elfeed(;
     :config
     (elfeed-org))
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-ql
+    :ensure t)
+#+END_SRC
