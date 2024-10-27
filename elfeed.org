@@ -1,0 +1,10 @@
+* Blogs :elfeed:
+** Tech
+*** https://www.norvig.com/rss-feed.xml
+*** https://www.daemonology.net/hn-daily/index.rss
+** Mandarin
+*** https://www.chinesethehardway.com/index.xml
+*** https://www.hackingchinese.com/feed/
+*** https://teachyourselfmandarin.wordpress.com/feed/
+** Emacs
+*** https://karl-voit.at/feeds/lazyblorg-all.atom_1.0.links-only.xml
