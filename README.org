@@ -308,6 +308,15 @@ Insert current date 'Day, YYYY-MM-DD':
   (global-set-key (kbd "C-c d") 'insert-current-date)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (defun open-this-pdf-in-firefox ()
+    "Open the current PDF file in Firefox."
+    (interactive)
+    (if (and buffer-file-name (string-equal (file-name-extension buffer-file-name) "pdf"))
+        (start-process "open-pdf-in-firefox" nil "firefox" buffer-file-name)
+      (message "This is not a PDF buffer!")))
+#+END_SRC
+
 Following instructions here: https://kchousos.github.io/posts/sicp-in-emacs/
 #+BEGIN_SRC emacs-lisp
   (use-package sicp)
