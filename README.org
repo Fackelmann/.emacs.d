@@ -249,10 +249,53 @@ To automatically commit changes in my documents:
     :config
     (setq gac-ask-for-summary-p t))
 #+END_SRC
+
 #+BEGIN_SRC emacs-lisp
   (use-package org-bookmark-heading
     :ensure t)
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; SLIME setup
+  (use-package slime
+    :init
+    (setq inferior-lisp-program "sbcl")
+    :config
+    (slime-setup '(slime-fancy))
+    :bind
+    (("C-c C-s" . slime))) ; Optional keybinding to start SLIME
+
+  ;; Optional but recommended: ParEdit for structured editing
+  (use-package paredit
+    :hook
+    (emacs-lisp-mode . paredit-mode)
+    (lisp-mode . paredit-mode)
+    (slime-repl-mode . paredit-mode))
+
+  ;; Optional: Rainbow delimiters to help with parentheses
+  (use-package rainbow-delimiters
+    :hook
+    (emacs-lisp-mode . rainbow-delimiters-mode)
+    (lisp-mode . rainbow-delimiters-mode)
+    (slime-repl-mode . rainbow-delimiters-mode)
+    (org-mode . rainbow-delimiters-mode))
+
+  (use-package smartparens
+  :ensure t
+  :config
+  (require 'smartparens-config)
+  ;; Enable in programming modes
+  ;;(add-hook 'prog-mode-hook #'smartparens-mode)
+  ;; Or use it everywhere
+  (smartparens-global-mode 1)
+
+  ;; For Lisp languages, you might want strict mode
+  (add-hook 'lisp-mode-hook #'smartparens-strict-mode)
+  (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
+  (add-hook 'scheme-mode-hook #'smartparens-strict-mode)
+  (add-hook 'racket-mode-hook #'smartparens-strict-mode))
+#+END_SRC
+
 * Custom functions
 
 Insert current date 'Day, YYYY-MM-DD':
