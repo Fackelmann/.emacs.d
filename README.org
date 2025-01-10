@@ -249,6 +249,10 @@ To automatically commit changes in my documents:
     :config
     (setq gac-ask-for-summary-p t))
 #+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bookmark-heading
+    :ensure t)
+#+END_SRC
 * Custom functions
 
 Insert current date 'Day, YYYY-MM-DD':
