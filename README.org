@@ -74,53 +74,61 @@ Magit. Use git without the command line.
 
 Some essential org-mode bindings:
 #+BEGIN_SRC emacs-lisp
-  (use-package org
-    :bind
-    ("C-c l" . org-store-link)
-    ("C-c a" . org-agenda)
-    ("C-c c" . org-capture)
-    :config
-    (setq org-use-speed-commands t)
-    ;; enable bash for babel
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((shell . t)))
-    (setq org-confirm-babel-evaluate nil)
-    ;; don't leave an empty line after inserting  a heading
-    (setq org-blank-before-new-entry
-      	'((heading . nil) (plain-list-item . nil)))
-    (setq org-directory "~/org")
-    (setq org-agenda-files (list "notes.org" "inbox.org"))
-    (setq org-enforce-todo-dependencies t)
-    ;; Don't show blocked tasks in agenda
-    (setq org-agenda-dim-blocked-tasks 'invisible)
-    ;; Don't show future scheduled tasks in agenda
-    (setq org-agenda-todo-ignore-scheduled 'future)
-    (defun dgp/org-add-created-date ()
-      "Add a CREATED property with the current date when creating a task."
-      (when (and (org-get-todo-state)
-                 (not (org-entry-get (point) "CREATED")))
-        (org-set-property "CREATED" (format-time-string "[%Y-%m-%d %a]"))))
-    ;; Add hook after change state
-    (add-hook 'org-after-todo-state-change-hook 'dgp/org-add-created-date)
-    ;; Org Capture Template for TODOs to Inbox
-    (setq org-capture-templates
-  	'(("t" "Todo" entry (file "~/org/inbox.org")
-  	   "* TODO %?\n  :PROPERTIES:\n:CREATED: %U\n:END:")))
-    ;; org refile settings
-    (setq org-refile-targets (list
-  			    (cons 'org-agenda-files
-  				  (cons :maxlevel 9))))
-    (setq org-refile-use-outline-path t)
-    (setq org-outline-path-complete-in-steps nil)
-    ;; Record when a task is done
-    (setq org-log-done 'time)
-    ;; Change level 4 color to play well with dracula theme
-    (custom-theme-set-faces 'user
-                    `(org-level-4 ((t (:foreground "orange")))))
-    ;; Add org habits
-    (add-to-list 'org-modules 'org-habit)
-    (setq org-habit-show-all-today t))
+    (use-package org
+      :bind
+      ("C-c l" . org-store-link)
+      ("C-c a" . org-agenda)
+      ("C-c c" . org-capture)
+      :config
+      (setq org-use-speed-commands t)
+      ;; enable bash for babel
+      (org-babel-do-load-languages
+       'org-babel-load-languages
+       '((shell . t)))
+      (setq org-confirm-babel-evaluate nil)
+      ;; don't leave an empty line after inserting  a heading
+      (setq org-blank-before-new-entry
+        	'((heading . nil) (plain-list-item . nil)))
+      (setq org-directory "~/org")
+      (setq org-agenda-files (list "notes.org" "inbox.org"))
+      (setq org-enforce-todo-dependencies t)
+      ;; Don't show blocked tasks in agenda
+      (setq org-agenda-dim-blocked-tasks 'invisible)
+      ;; Don't show future scheduled tasks in agenda
+      (setq org-agenda-todo-ignore-scheduled 'future)
+      (defun dgp/org-add-created-date ()
+        "Add a CREATED property with the current date when creating a task."
+        (when (and (org-get-todo-state)
+                   (not (org-entry-get (point) "CREATED")))
+          (org-set-property "CREATED" (format-time-string "[%Y-%m-%d %a]"))))
+      ;; Add hook after change state
+      (add-hook 'org-after-todo-state-change-hook 'dgp/org-add-created-date)
+      ;; Org Capture Template for TODOs to Inbox
+      (setq org-capture-templates
+    	'(("t" "Todo" entry (file "~/org/inbox.org")
+    	   "* TODO %?\n  :PROPERTIES:\n:CREATED: %U\n:END:")))
+      ;; org refile settings
+      (setq org-refile-targets (list
+    			    (cons 'org-agenda-files
+    				  (cons :maxlevel 9))))
+      (setq org-refile-use-outline-path t)
+      (setq org-outline-path-complete-in-steps nil)
+      ;; Record when a task is done
+      (setq org-log-done 'time)
+      ;; Change level 4 color to play well with dracula theme
+      (custom-theme-set-faces 'user
+                      `(org-level-4 ((t (:foreground "orange")))))
+      ;; Add org habits
+      (add-to-list 'org-modules 'org-habit)
+      (setq org-habit-show-all-today t)
+      ;; Org-goto jump to heading
+      (setq org-goto-interface 'outline-path-completion)
+  	;; Show effort
+      (setq org-agenda-prefix-format
+  	    '((agenda . " %i %-12:c%?-12t% s [%e] ")  ;; Shows effort in agenda view
+  	      (todo . " %i %-12:c [%e] ")             ;; Shows effort in TODO list (`C-c a t`)
+  	      (tags . " %i %-12:c [%e] ")             ;; Shows effort in tag searches
+  	      (search . " %i %-12:c [%e] "))))
 #+END_SRC
 
 And setting up org-journal for my daily notes:
