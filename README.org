@@ -2,6 +2,9 @@
 #+AUTHOR: Daniel Gonzalez Plaza
 
 * General configuration
+:PROPERTIES:
+:ID:       b17113cd-7179-4641-9f0c-4d00537092b0
+:END:
 
 Use command key as meta (macOS):
 #+BEGIN_SRC emacs-lisp
@@ -23,6 +26,9 @@ I don't like the ~custom*~ variables being saved in my config file and clutterin
 Likewise, I don't like having backup files (~) all over the place. But they are sometimes useful. This setting saves all of them under the same directory.
 #+BEGIN_SRC emacs-lisp
   (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+  (setq auto-save-file-name-transforms
+        `((".*" "~/.emacs.d/auto-save-list/" t)))
+  (setq create-lockfiles nil)
 #+END_SRC
 
 Inhibit the startup screen. I'll take the ~scratch~ buffer, thank you very much.
@@ -46,9 +52,13 @@ And I like having the clock in the mode line, so I can easily tell the time when
 Wrap around lines:
 #+BEGIN_SRC emacs-lisp
   (global-visual-line-mode t)
+  (global-display-line-numbers-mode 1)
 #+END_SRC
 
 * Eyecandy
+:PROPERTIES:
+:ID:       176cab63-22c0-4dd8-ba01-90ed26a9867e
+:END:
 
 Dracula theme:
 #+BEGIN_SRC emacs-lisp
@@ -59,6 +69,9 @@ Dracula theme:
 #+END_SRC
 
 * Packages
+:PROPERTIES:
+:ID:       ca325945-3017-40bb-9620-1b376dce56c3
+:END:
 Magit. Use git without the command line.
 
 #+BEGIN_SRC emacs-lisp
@@ -190,19 +203,54 @@ Spell checking:
 Run LLM locally with ollama and gptel:
 
 #+BEGIN_SRC emacs-lisp
-  (use-package gptel
-    :ensure t
-    :config
-    (setq gptel-model 'claude-3-5-haiku-latest
-      	gptel-backend (gptel-make-anthropic "Claude"
-      			:stream t
-      			:key (getenv "ANTHROPIC_API_KEY_GPTEL")
-      			:models '(claude-3-5-haiku-latest
-      				  claude-3-5-sonnet-latest)))
+    (use-package gptel
+      :ensure t
+      :config
+      (setq gptel-model 'claude-haiku-4-5
+        	gptel-backend (gptel-make-anthropic "Claude"
+        			:stream t
+        			:key (getenv "ANTHROPIC_API_KEY_GPTEL")
+        			:models '(claude-haiku-4-5)))
+    (setq gptel-default-mode 'org-mode)
+    (setq gptel-org-branching-context t)
+    (add-hook 'gptel-post-response-functions 'gptel-end-of-response)
+    (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "@user\n")
+    (setf (alist-get 'org-mode gptel-response-prefix-alist) "@assistant\n")
+      ;; Add new directives to existing ones
+    (setq gptel-directives
+          (append gptel-directives
+                  '((solveit . "You're helping me learn through iterative problem-solving using the SolveIt methodology.
 
-    (add-hook 'gptel-post-response-functions 'gptel-end-of-response))
+  CORE PRINCIPLES:
+    - Guide me to discover solutions rather than just providing answers
+    - Guide me to discover solutions rather than just providing answers
+    - Guide me to discover solutions rather than just providing answers
+  - See how many times that's repeated? That's because it's very important. We can eventually talk about answers, but try to guide me to discover solutions. Guide me to discover solutions. Got it? Most important principle.
+  - Work in small, concrete steps (suggest 1-5 lines of code at a time)
+  - Explain concepts briefly BEFORE suggesting implementation
+  - After I implement something, ask me what happened
+  - Keep responses concise and practical (I'm reading in Emacs)
+
+  WORKFLOW:
+  1. I share code, describe what I'm working on, or ask a question
+  2. You explain the relevant concept in 2-3 sentences
+  3. You suggest a small, specific next step
+  4. I implement and report back what happened
+  5. We discuss the results and iterate
+
+  My goal is to deeply UNDERSTAND what I'm building, not just get working code.")))))
+  (defun my-gptel-fetch-and-insert-webpage (url)
+  "Fetch webpage content and insert it into the gptel buffer."
+  (interactive "sURL: ")
+  (let ((content (shell-command-to-string 
+                  (format "curl -s '%s' | pandoc -f html -t plain" url))))
+    (insert (format "\nHere's the content from %s:\n\n%s\n\nPlease answer questions about this content.\n" 
+                    url content))))
 
 #+END_SRC
+
+#+RESULTS:
+: my-gptel-fetch-and-insert-webpage
 
 To have bookmarks directly point to org headings:
 #+BEGIN_SRC emacs-lisp
@@ -211,6 +259,9 @@ To have bookmarks directly point to org headings:
   
 #+END_SRC
 * Testing
+:PROPERTIES:
+:ID:       26c86b14-9308-4b5b-ae90-fa317d3c69b9
+:END:
 New packages that I'm testing but might be removed:
 
 #+BEGIN_SRC emacs-lisp
@@ -310,6 +361,9 @@ To automatically commit changes in my documents:
 #+END_SRC
 
 * Custom functions
+:PROPERTIES:
+:ID:       071e7dc3-220b-4273-a84d-9a8756091a52
+:END:
 
 Insert current date 'Day, YYYY-MM-DD':
 
@@ -318,7 +372,7 @@ Insert current date 'Day, YYYY-MM-DD':
     (interactive)
     (insert (format-time-string "%A, %Y-%m-%d")))
 
-  (global-set-key (kbd "C-c d") 'insert-current-date)
+
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -358,3 +412,61 @@ Read feeds with elfeed(;
     :ensure t)
 #+END_SRC
 
+
+#+BEGIN_SRC emacs-lisp
+(defalias 'add-journal-entry
+   (kmacro "M-> C-<return> <tab> <tab> C-c ! <return> SPC C-c d C-<return> <tab> E v e n i n g SPC J o u r n a l <return>"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-mode
+  :ensure t
+  :hook (typescript-mode . lsp-deferred)
+  :commands lsp)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :ensure t
+    :config
+    (setq company-idle-delay 0.0) ; Pop up immediately
+    (setq company-minimum-prefix-length 1) ; Show after 1 character
+    :hook (typescript-mode . company-mode)) ; Only turn it on for TypeScript
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package typescript-mode
+    :ensure t
+    :mode "\\.ts\\'"   ;; This tells Emacs: "Use this mode for all .ts files"
+    :config
+    (setq typescript-indent-level 2)) ;; Screeps starter usually uses 2 spaces
+
+  ;; This part ensures your LSP (autocompletion) starts with the mode
+  (add-hook 'typescript-mode-hook #'lsp-deferred)
+  (use-package which-key
+  :ensure t
+  :init
+  (which-key-mode)
+  :config
+  (setq which-key-idle-delay 0.3)) ;; Shows the menu faster (0.3 seconds)
+  (setq lsp-keymap-prefix "C-c h")
+  ;; Make the matching paren have a bright orange background
+(set-face-background 'show-paren-match "#ffaa00")
+(set-face-foreground 'show-paren-match "#000000")
+
+;; Make it show the match immediately (no delay)
+(setq show-paren-delay 0)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode
+    :hook (lsp-mode . lsp-ui-mode)
+    :config
+    (setq lsp-ui-doc-enable t)      ;; Enable the hover popups
+    (setq lsp-ui-sideline-enable t) ;; Enable the info on the right
+    (setq lsp-ui-doc-position 'at-point)
+    (setq lsp-ui-doc-use-header t)
+(setq lsp-ui-doc-use-childframe nil)) ;; Show the popup right where your cursor is
+  #+END_SRC
