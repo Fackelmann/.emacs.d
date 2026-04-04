@@ -6,11 +6,6 @@
 :ID:       b17113cd-7179-4641-9f0c-4d00537092b0
 :END:
 
-Use command key as meta (macOS):
-#+BEGIN_SRC emacs-lisp
-  (setq ns-command-modifier 'meta)
-#+END_SRC
-
 Fido mode for minibuffer autocompletion (instead of Helm or Ivy):
 #+BEGIN_SRC emacs-lisp
   (fido-mode t)
@@ -20,7 +15,8 @@ Fido mode for minibuffer autocompletion (instead of Helm or Ivy):
 I don't like the ~custom*~ variables being saved in my config file and cluttering it. I prefer to have them in their own location.
 #+BEGIN_SRC emacs-lisp
   (setq custom-file "~/.emacs.d/custom.el")
-  (load custom-file)
+  (when (file-exists-p custom-file)
+    (load custom-file))
 #+END_SRC
 
 Likewise, I don't like having backup files (~) all over the place. But they are sometimes useful. This setting saves all of them under the same directory.
@@ -329,13 +325,6 @@ To automatically commit changes in my documents:
     :bind
     (("C-c C-s" . slime))) ; Optional keybinding to start SLIME
 
-  ;; Optional but recommended: ParEdit for structured editing
-  (use-package paredit
-    :hook
-    (emacs-lisp-mode . paredit-mode)
-    (lisp-mode . paredit-mode)
-    (slime-repl-mode . paredit-mode))
-
   ;; Optional: Rainbow delimiters to help with parentheses
   (use-package rainbow-delimiters
     :hook
@@ -421,6 +410,8 @@ Read feeds with elfeed(;
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-mode
   :ensure t
+  :init
+  (setq lsp-keymap-prefix "C-c h")
   :hook (typescript-mode . lsp-deferred)
   :commands lsp)
 #+END_SRC
@@ -441,15 +432,6 @@ Read feeds with elfeed(;
     :config
     (setq typescript-indent-level 2)) ;; Screeps starter usually uses 2 spaces
 
-  ;; This part ensures your LSP (autocompletion) starts with the mode
-  (add-hook 'typescript-mode-hook #'lsp-deferred)
-  (use-package which-key
-  :ensure t
-  :init
-  (which-key-mode)
-  :config
-  (setq which-key-idle-delay 0.3)) ;; Shows the menu faster (0.3 seconds)
-  (setq lsp-keymap-prefix "C-c h")
   ;; Make the matching paren have a bright orange background
 (set-face-background 'show-paren-match "#ffaa00")
 (set-face-foreground 'show-paren-match "#000000")
