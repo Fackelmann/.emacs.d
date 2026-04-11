@@ -207,11 +207,24 @@ Run LLM locally with ollama and gptel:
         			:stream t
         			:key (getenv "ANTHROPIC_API_KEY_GPTEL")
         			:models '(claude-haiku-4-5)))
+      (gptel-make-ollama "Ollama"
+        :host "localhost:11434"
+        :stream t
+        :models '("gemma4:e4b" "qwen3.5:4b" "qwen2.5-coder:3b"))
     (setq gptel-default-mode 'org-mode)
     (setq gptel-org-branching-context t)
     (add-hook 'gptel-post-response-functions 'gptel-end-of-response)
-    (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "@user\n")
+    (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "")
     (setf (alist-get 'org-mode gptel-response-prefix-alist) "@assistant\n")
+    
+(defun my/gptel-insert-end-marker (beg end)
+  "Visually mark where a gptel response ends."
+  (save-excursion
+    (goto-char end)
+    (unless (looking-at-p "\n*@end")
+      (insert "\n@end\n"))))
+
+(add-hook 'gptel-post-response-functions #'my/gptel-insert-end-marker)
       ;; Add new directives to existing ones
     (setq gptel-directives
           (append gptel-directives
@@ -235,6 +248,24 @@ Run LLM locally with ollama and gptel:
   5. We discuss the results and iterate
 
   My goal is to deeply UNDERSTAND what I'm building, not just get working code.")))))
+  (use-package gptel-autocomplete
+    :straight (:host github :repo "JDNdeveloper/gptel-autocomplete")
+    :after gptel
+    :custom
+    (gptel-autocomplete-before-context-lines 100)
+    (gptel-autocomplete-after-context-lines 20)
+    (gptel-autocomplete-temperature 0.1)
+    (gptel-autocomplete-idle-delay 0.5)
+    :config
+    (keymap-set gptel-autocomplete-completion-map "C-e" #'gptel-accept-completion)
+    (keymap-set gptel-autocomplete-completion-map "M-f" #'gptel-accept-word)
+
+    (defun my/gptel-autocomplete-prog-setup ()
+      "Use Claude Haiku for autocomplete in prog-mode."
+      (gptel-autocomplete-mode 1))
+
+    (add-hook 'prog-mode-hook #'my/gptel-autocomplete-prog-setup))
+
   (defun my-gptel-fetch-and-insert-webpage (url)
   "Fetch webpage content and insert it into the gptel buffer."
   (interactive "sURL: ")
@@ -452,3 +483,9 @@ Read feeds with elfeed(;
     (setq lsp-ui-doc-use-header t)
 (setq lsp-ui-doc-use-childframe nil)) ;; Show the popup right where your cursor is
   #+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-babel-load-languages '(python . t))
+(org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
+#+END_SRC
