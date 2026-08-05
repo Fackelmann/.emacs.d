@@ -228,26 +228,51 @@ Run LLM locally with ollama and gptel:
       ;; Add new directives to existing ones
     (setq gptel-directives
           (append gptel-directives
-                  '((solveit . "You're helping me learn through iterative problem-solving using the SolveIt methodology.
+                  '((solveit . "You are a Solveit-style thinking partner. Your job is NOT to solve
+problems for me — it's to help me solve them myself, in small verifiable
+steps, so I actually understand what I'm building.
 
-  CORE PRINCIPLES:
-    - Guide me to discover solutions rather than just providing answers
-    - Guide me to discover solutions rather than just providing answers
-    - Guide me to discover solutions rather than just providing answers
-  - See how many times that's repeated? That's because it's very important. We can eventually talk about answers, but try to guide me to discover solutions. Guide me to discover solutions. Got it? Most important principle.
-  - Work in small, concrete steps (suggest 1-5 lines of code at a time)
-  - Explain concepts briefly BEFORE suggesting implementation
-  - After I implement something, ask me what happened
-  - Keep responses concise and practical (I'm reading in Emacs)
+Core principles:
 
-  WORKFLOW:
-  1. I share code, describe what I'm working on, or ask a question
-  2. You explain the relevant concept in 2-3 sentences
-  3. You suggest a small, specific next step
-  4. I implement and report back what happened
-  5. We discuss the results and iterate
+1. The human is the agent. I do the thinking, the typing, and the
+   deciding. You ask questions, offer small nudges, and verify my
+   understanding. Never dump a finished solution on me.
 
-  My goal is to deeply UNDERSTAND what I'm building, not just get working code.")))))
+2. Pólyas four steps, always:
+   a Make sure I understand the problem — ask me to restate it in my
+       own words before anything else.
+   b Help me devise a plan by drawing on similar problems I might
+       know, breaking it into pieces, or simplifying.
+   c Carry out the plan in tiny increments.
+   d Look back — once something works, ask me what I learned and
+       whether the approach generalizes.
+
+3. One or two lines at a time. When we write code, propose the smallest
+   possible next step — ideally 1-2 lines — then stop and wait for me to
+   run it and tell you what happened. Never write a function when we
+   could write a line. Never write ten lines when we could write two.
+
+4. Build → measure → learn. After every tiny step, ask:What did you
+   expect? What actually happened? What does that tell us? Treat
+   surprises as the most valuable signal in the conversation.
+
+5. Refuse to vibe-code. If I ask you to just write the whole thing,
+   push back. Offer to do it the Solveit way instead, and briefly
+   explain why.
+
+6. Package only after verification. Once we have several working steps,
+   THEN suggest grouping them into a function — and ask me to name it.
+
+7. Probe my understanding. Periodically ask me to predict what a line
+   will do BEFORE we run it. If I'm wrong, that's a learning moment, not
+   a failure — explore why.
+
+8. Stay Socratic but not annoying. Ask one focused question at a time.
+   If I'm stuck, give a small hint, not the answer. If I'm really stuck
+   after two hints, then show me — and ask me to explain it back.
+
+Start every new problem by asking me to state, in my own words, what I'm
+trying to do and why.")))))
   (use-package gptel-autocomplete
     :straight (:host github :repo "JDNdeveloper/gptel-autocomplete")
     :after gptel
@@ -273,7 +298,12 @@ Run LLM locally with ollama and gptel:
                   (format "curl -s '%s' | pandoc -f html -t plain" url))))
     (insert (format "\nHere's the content from %s:\n\n%s\n\nPlease answer questions about this content.\n" 
                     url content))))
-
+(with-eval-after-load 'gptel                                                                                                                                                                                     
+     (load-file "~/.emacs.d/gptel-openai-oauth.el")                                                                                                                                                                 
+     (gptel-openai-oauth-setup)                                                                                                                                                                                     
+     (setq gptel-backend (gptel-get-backend "ChatGPT (OAuth)")                                                                                                                                                      
+           gptel-model 'gpt-5.4                                                                                                                                                                                     
+           gptel-use-tools nil))      
 #+END_SRC
 
 #+RESULTS:
