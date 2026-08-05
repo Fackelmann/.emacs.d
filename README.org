@@ -199,80 +199,84 @@ Spell checking:
 Run LLM locally with ollama and gptel:
 
 #+BEGIN_SRC emacs-lisp
-    (use-package gptel
-      :ensure t
-      :config
-      (setq gptel-model 'claude-haiku-4-5
-        	gptel-backend (gptel-make-anthropic "Claude"
-        			:stream t
-        			:key (getenv "ANTHROPIC_API_KEY_GPTEL")
-        			:models '(claude-haiku-4-5)))
-      (gptel-make-ollama "Ollama"
-        :host "localhost:11434"
-        :stream t
-        :models '("gemma4:e4b" "qwen3.5:4b" "qwen2.5-coder:3b"))
+  (use-package gptel
+    :ensure t
+    :config
+    (setq gptel-model 'claude-haiku-4-5
+          gptel-backend (gptel-make-anthropic "Claude"
+          		:stream t
+          		:key (getenv "ANTHROPIC_API_KEY_GPTEL")
+          		:models '(claude-haiku-4-5)))
+    (gptel-make-ollama "Ollama"
+      :host "localhost:11434"
+      :stream t
+      :models '("gemma4:e4b" "qwen3.5:4b" "qwen2.5-coder:3b"))
     (setq gptel-default-mode 'org-mode)
     (setq gptel-org-branching-context t)
-    (add-hook 'gptel-post-response-functions 'gptel-end-of-response)
     (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "")
     (setf (alist-get 'org-mode gptel-response-prefix-alist) "@assistant\n")
-    
-(defun my/gptel-insert-end-marker (beg end)
-  "Visually mark where a gptel response ends."
-  (save-excursion
-    (goto-char end)
-    (unless (looking-at-p "\n*@end")
-      (insert "\n@end\n"))))
 
-(add-hook 'gptel-post-response-functions #'my/gptel-insert-end-marker)
-      ;; Add new directives to existing ones
+    (defun my/gptel-finish-response (beg end)
+      "Mark where a gptel response ends and leave point after the marker."
+      (when (< beg end)                 ; don't add @end for failed/empty responses
+        (goto-char end)
+        (if (looking-at "\n*@end[ \t]*\n?")
+            (goto-char (match-end 0))
+          (insert "\n@end\n"))))
+
+    ;; `gptel-end-of-response' stops at the response text, before our custom
+    ;; @end marker.  Use one hook that inserts the marker and leaves point after it.
+    (remove-hook 'gptel-post-response-functions #'gptel-end-of-response)
+    (remove-hook 'gptel-post-response-functions #'my/gptel-insert-end-marker)
+    (add-hook 'gptel-post-response-functions #'my/gptel-finish-response 90)
+    ;; Add new directives to existing ones
     (setq gptel-directives
           (append gptel-directives
                   '((solveit . "You are a Solveit-style thinking partner. Your job is NOT to solve
-problems for me — it's to help me solve them myself, in small verifiable
-steps, so I actually understand what I'm building.
+  problems for me — it's to help me solve them myself, in small verifiable
+  steps, so I actually understand what I'm building.
 
-Core principles:
+  Core principles:
 
-1. The human is the agent. I do the thinking, the typing, and the
-   deciding. You ask questions, offer small nudges, and verify my
-   understanding. Never dump a finished solution on me.
+  1. The human is the agent. I do the thinking, the typing, and the
+     deciding. You ask questions, offer small nudges, and verify my
+     understanding. Never dump a finished solution on me.
 
-2. Pólyas four steps, always:
-   a Make sure I understand the problem — ask me to restate it in my
-       own words before anything else.
-   b Help me devise a plan by drawing on similar problems I might
-       know, breaking it into pieces, or simplifying.
-   c Carry out the plan in tiny increments.
-   d Look back — once something works, ask me what I learned and
-       whether the approach generalizes.
+  2. Pólyas four steps, always:
+     a Make sure I understand the problem — ask me to restate it in my
+         own words before anything else.
+     b Help me devise a plan by drawing on similar problems I might
+         know, breaking it into pieces, or simplifying.
+     c Carry out the plan in tiny increments.
+     d Look back — once something works, ask me what I learned and
+         whether the approach generalizes.
 
-3. One or two lines at a time. When we write code, propose the smallest
-   possible next step — ideally 1-2 lines — then stop and wait for me to
-   run it and tell you what happened. Never write a function when we
-   could write a line. Never write ten lines when we could write two.
+  3. One or two lines at a time. When we write code, propose the smallest
+     possible next step — ideally 1-2 lines — then stop and wait for me to
+     run it and tell you what happened. Never write a function when we
+     could write a line. Never write ten lines when we could write two.
 
-4. Build → measure → learn. After every tiny step, ask:What did you
-   expect? What actually happened? What does that tell us? Treat
-   surprises as the most valuable signal in the conversation.
+  4. Build → measure → learn. After every tiny step, ask:What did you
+     expect? What actually happened? What does that tell us? Treat
+     surprises as the most valuable signal in the conversation.
 
-5. Refuse to vibe-code. If I ask you to just write the whole thing,
-   push back. Offer to do it the Solveit way instead, and briefly
-   explain why.
+  5. Refuse to vibe-code. If I ask you to just write the whole thing,
+     push back. Offer to do it the Solveit way instead, and briefly
+     explain why.
 
-6. Package only after verification. Once we have several working steps,
-   THEN suggest grouping them into a function — and ask me to name it.
+  6. Package only after verification. Once we have several working steps,
+     THEN suggest grouping them into a function — and ask me to name it.
 
-7. Probe my understanding. Periodically ask me to predict what a line
-   will do BEFORE we run it. If I'm wrong, that's a learning moment, not
-   a failure — explore why.
+  7. Probe my understanding. Periodically ask me to predict what a line
+     will do BEFORE we run it. If I'm wrong, that's a learning moment, not
+     a failure — explore why.
 
-8. Stay Socratic but not annoying. Ask one focused question at a time.
-   If I'm stuck, give a small hint, not the answer. If I'm really stuck
-   after two hints, then show me — and ask me to explain it back.
+  8. Stay Socratic but not annoying. Ask one focused question at a time.
+     If I'm stuck, give a small hint, not the answer. If I'm really stuck
+     after two hints, then show me — and ask me to explain it back.
 
-Start every new problem by asking me to state, in my own words, what I'm
-trying to do and why.")))))
+  Start every new problem by asking me to state, in my own words, what I'm
+  trying to do and why.")))))
   (use-package gptel-autocomplete
     :straight (:host github :repo "JDNdeveloper/gptel-autocomplete")
     :after gptel
@@ -292,18 +296,18 @@ trying to do and why.")))))
     (add-hook 'prog-mode-hook #'my/gptel-autocomplete-prog-setup))
 
   (defun my-gptel-fetch-and-insert-webpage (url)
-  "Fetch webpage content and insert it into the gptel buffer."
-  (interactive "sURL: ")
-  (let ((content (shell-command-to-string 
-                  (format "curl -s '%s' | pandoc -f html -t plain" url))))
-    (insert (format "\nHere's the content from %s:\n\n%s\n\nPlease answer questions about this content.\n" 
-                    url content))))
-(with-eval-after-load 'gptel                                                                                                                                                                                     
-     (load-file "~/.emacs.d/gptel-openai-oauth.el")                                                                                                                                                                 
-     (gptel-openai-oauth-setup)                                                                                                                                                                                     
-     (setq gptel-backend (gptel-get-backend "ChatGPT (OAuth)")                                                                                                                                                      
-           gptel-model 'gpt-5.4                                                                                                                                                                                     
-           gptel-use-tools nil))      
+    "Fetch webpage content and insert it into the gptel buffer."
+    (interactive "sURL: ")
+    (let ((content (shell-command-to-string 
+                    (format "curl -s '%s' | pandoc -f html -t plain" url))))
+      (insert (format "\nHere's the content from %s:\n\n%s\n\nPlease answer questions about this content.\n" 
+                      url content))))
+  (with-eval-after-load 'gptel
+    (require 'gptel-openai-oauth)
+    (setq gptel-backend (gptel-make-openai-oauth "OpenAI-sub")
+  	gptel-model 'gpt-5.6-terra
+  	gptel-use-tools t)
+    )
 #+END_SRC
 
 #+RESULTS:
@@ -458,8 +462,8 @@ Read feeds with elfeed(;
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-noter
-    :ensure t)
+;;  (use-package org-noter
+;;    :ensure t)
 #+END_SRC
 
 
